@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sino — suas paróquias</title>
+<meta name="theme-color" content="#12162A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --night:#12162A;
+    --raised:#1B2038;
+    --line:#2B3252;
+    --text:#E7E4DB;
+    --dim:#98A0BE;
+    --gold:#D8B44A;
+    --violet:#9B87D4;
+    --sage:#7FA98C;
+    --sky:#7FA3C9;
+    --danger:#C97B7B;
+    --pad:18px;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--night);color:var(--text);
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    font-size:16px;line-height:1.5;-webkit-text-size-adjust:100%;
+    padding-bottom:calc(78px + env(safe-area-inset-bottom));
+  }
+  h1,h2,h3,.display{font-family:"Cormorant Garamond",Georgia,serif;font-weight:600;letter-spacing:.01em;margin:0}
+  button{font:inherit;color:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:4px}
+
+  header{padding:calc(env(safe-area-inset-top) + 18px) var(--pad) 10px;display:flex;align-items:baseline;gap:10px}
+  header h1{font-size:26px}
+  header .sub{color:var(--dim);font-size:13px}
+  main{padding:0 var(--pad);max-width:760px;margin:0 auto}
+
+  .hero{
+    border:1px solid var(--line);border-left:4px solid var(--gold);
+    border-radius:var(--radius);background:var(--raised);padding:20px;margin-bottom:22px;
+  }
+  .hero .kicker{color:var(--dim);font-size:13px;margin-bottom:6px}
+  .hero .time{font-family:"Cormorant Garamond",Georgia,serif;font-size:56px;line-height:1;font-weight:600}
+  .hero .when{color:var(--gold);font-size:14px;margin-top:4px}
+  .hero .where{margin-top:12px;font-size:15px}
+  .hero .where small{display:block;color:var(--dim);font-size:13px;margin-top:2px}
+
+  .daygroup{margin-bottom:22px}
+  .daygroup h3{font-size:19px;margin-bottom:8px}
+  .daygroup.today h3{color:var(--gold)}
+  .item{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--line)}
+  .item .hh{font-variant-numeric:tabular-nums;min-width:52px;font-size:15px}
+  .item .body{flex:1;min-width:0}
+  .item .kind{font-size:15px}
+  .item .par{color:var(--dim);font-size:13px}
+  .item .note{color:var(--dim);font-size:13px;font-style:italic}
+  .dot{width:8px;height:8px;border-radius:50%;margin-top:8px;flex:none;background:var(--dim)}
+  .k-missa{background:var(--gold)}
+  .k-adoracao{background:var(--violet)}
+  .k-confissao{background:var(--sage)}
+  .k-terco{background:var(--sky)}
+  .past{opacity:.42}
+  .star{color:var(--gold);font-size:12px;margin-left:6px}
+
+  .parish{border:1px solid var(--line);border-radius:var(--radius);background:var(--raised);padding:14px 16px;margin-bottom:12px}
+  .parish h3{font-size:20px}
+  .parish .addr{color:var(--dim);font-size:13px;margin:2px 0 10px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+  .chip{border:1px solid var(--line);border-radius:999px;padding:4px 10px;font-size:13px;display:flex;align-items:center;gap:6px}
+  .chip b{font-weight:500;font-variant-numeric:tabular-nums}
+  .chip .x{color:var(--dim);border:0;background:none;padding:0 0 0 2px;font-size:15px;line-height:1}
+  .chip .x:hover{color:var(--danger)}
+
+  .rowbtns{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{background:transparent;border:1px solid var(--line);border-radius:10px;padding:9px 14px;font-size:14px;display:inline-block}
+  .btn:hover{border-color:var(--dim)}
+  .btn.primary{background:var(--gold);border-color:var(--gold);color:#20180A;font-weight:600}
+  .btn.quiet{border:0;color:var(--dim);padding:9px 4px}
+  .btn.quiet:hover{color:var(--danger)}
+
+  .form{border-top:1px solid var(--line);margin-top:12px;padding-top:12px;display:none}
+  .form.open{display:block}
+  label{display:block;font-size:13px;color:var(--dim);margin:10px 0 4px}
+  input[type=text],input[type=time],input[type=date],select{
+    width:100%;background:var(--night);color:var(--text);
+    border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;
+  }
+  .days{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+  .days label{
+    margin:0;border:1px solid var(--line);border-radius:9px;width:42px;height:40px;
+    display:flex;align-items:center;justify-content:center;color:var(--text);font-size:14px;cursor:pointer;
+  }
+  .days label.on{background:var(--gold);border-color:var(--gold);color:#20180A;font-weight:600}
+  .two{display:flex;gap:10px}
+  .two > div{flex:1}
+
+  .empty{border:1px dashed var(--line);border-radius:var(--radius);padding:24px 18px;text-align:center;color:var(--dim)}
+  .empty p{margin:0 0 14px}
+  .result{display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+  .result .body{flex:1;min-width:0}
+  .result .nm{font-size:15px}
+  .result .meta{color:var(--dim);font-size:13px}
+  .status{color:var(--dim);font-size:14px;padding:12px 0}
+  .aviso{color:var(--dim);font-size:13px;margin-top:10px;line-height:1.45}
+
+  /* ---- leituras ---- */
+  .litnav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .litnav .btn{padding:8px 12px}
+  .litnav .dia{text-align:center;flex:1}
+  .litnav .dia b{display:block;font-family:"Cormorant Garamond",Georgia,serif;font-size:20px;font-weight:600}
+  .litnav .dia span{color:var(--dim);font-size:13px}
+  .cor{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;border:1px solid rgba(255,255,255,.25);vertical-align:middle}
+  .titulo-lit{font-size:22px;margin-bottom:2px}
+  .leitura{border-top:1px solid var(--line);padding:4px 0}
+  .leitura summary{
+    list-style:none;cursor:pointer;padding:13px 0;display:flex;
+    justify-content:space-between;align-items:baseline;gap:12px;
+  }
+  .leitura summary::-webkit-details-marker{display:none}
+  .leitura summary .rot{font-size:16px}
+  .leitura summary .ref{color:var(--dim);font-size:13px;text-align:right;flex:none}
+  .leitura .texto{
+    font-family:"Cormorant Garamond",Georgia,serif;font-size:19px;line-height:1.62;
+    padding:0 0 16px;max-width:64ch;
+  }
+  .leitura .texto p{margin:0 0 .8em}
+  .leitura .refrao{color:var(--gold);font-style:italic}
+  .fonte{color:var(--dim);font-size:12px;padding:16px 0 4px}
+  .fonte a{color:var(--dim)}
+
+  nav.tabs{
+    position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;
+    background:rgba(18,22,42,.94);backdrop-filter:blur(10px);
+    border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);
+  }
+  nav.tabs button{flex:1;background:none;border:0;padding:11px 2px 13px;color:var(--dim);font-size:11px}
+  nav.tabs button.on{color:var(--gold)}
+  nav.tabs .g{display:block;font-family:"Cormorant Garamond",Georgia,serif;font-size:20px;line-height:1.15}
+
+  .foot{color:var(--dim);font-size:12px;padding:18px 0 8px;border-top:1px solid var(--line);margin-top:26px}
+  .foot button{background:none;border:0;color:var(--dim);text-decoration:underline;padding:0;font-size:12px}
+
+  @media (min-width:720px){
+    body{padding-bottom:24px}
+    main{max-width:900px}
+    nav.tabs{position:sticky;top:0;bottom:auto;border-top:0;border-bottom:1px solid var(--line);max-width:900px;margin:0 auto;border-radius:0 0 12px 12px}
+    .cols{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header><h1>Sino</h1><span class="sub">suas paróquias</span></header>
+
+<nav class="tabs" role="tablist">
+  <button id="t-hoje" class="on" onclick="go('hoje')"><span class="g">Hoje</span>próxima</button>
+  <button id="t-semana" onclick="go('semana')"><span class="g">Semana</span>programação</button>
+  <button id="t-leituras" onclick="go('leituras')"><span class="g">Leituras</span>liturgia</button>
+  <button id="t-paroquias" onclick="go('paroquias')"><span class="g">Paróquias</span>ajustes</button>
+</nav>
+
+<main id="view"></main>
+
+<script>
+/* ======================================================================
+   Sino — missas, adorações e programação das suas paróquias.
+   Tudo é guardado no próprio aparelho.
+   Vai à internet só para: buscar igrejas (OpenStreetMap) e
+   baixar a liturgia do dia (liturgia.up.railway.app).
+   ====================================================================== */
+
+var CHAVE = 'sino.dados.v1';
+var CHAVE_LIT = 'sino.leituras.v1';
+var memoria = null, memoriaLit = null;
+
+function leChave(chave, reserva){
+  try{
+    var bruto = localStorage.getItem(chave);
+    return bruto ? JSON.parse(bruto) : reserva;
+  }catch(e){
+    var m = (chave === CHAVE ? memoria : memoriaLit);
+    return m ? JSON.parse(m) : reserva;
+  }
+}
+function gravaChave(chave, valor){
+  var texto = JSON.stringify(valor);
+  if(chave === CHAVE) memoria = texto; else memoriaLit = texto;
+  try{ localStorage.setItem(chave, texto); }catch(e){ /* segue só na memória */ }
+}
+
+var dados = leChave(CHAVE, {paroquias:[], avisar:30, avisos:false});
+var cacheLit = leChave(CHAVE_LIT, {});
+
+// garante os campos novos em dados antigos
+if(typeof dados.avisar !== 'number') dados.avisar = 30;
+dados.paroquias.forEach(function(p){
+  p.horarios = p.horarios || [];
+  p.especiais = p.especiais || [];
+});
+
+function salvar(){ gravaChave(CHAVE, dados); }
+
+var aba = 'hoje';
+var formHorario = null;     // id da paróquia com o formulário semanal aberto
+var formEspecial = null;    // id da paróquia com o formulário de data especial aberto
+var diaLeitura = new Date();
+
+/* ---------- básico ---------- */
+var DIAS = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+var DIAS_CURTO = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+var ICS_DIA = ['SU','MO','TU','WE','TH','FR','SA'];
+var ORDINAL = {1:'1ª',2:'2ª',3:'3ª',4:'4ª','-1':'última'};
+var TIPOS = ['Missa','Adoração','Confissão','Terço','Outro'];
+var CLASSE = {'Missa':'k-missa','Adoração':'k-adoracao','Confissão':'k-confissao','Terço':'k-terco','Outro':''};
+var CORES_LIT = {'Verde':'#4E8C5C','Vermelho':'#B4453E','Roxo':'#7B5EA7','Rosa':'#C98BA6','Branco':'#EDE9DD'};
+
+function id(){ return Math.random().toString(36).slice(2,10); }
+function pad(n){ return (n<10?'0':'') + n; }
+function esc(s){
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function minutos(hhmm){ var p = String(hhmm).split(':'); return parseInt(p[0],10)*60 + parseInt(p[1],10); }
+function chaveData(d){ return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+function achaParoquia(pid){
+  for(var i=0;i<dados.paroquias.length;i++) if(dados.paroquias[i].id === pid) return dados.paroquias[i];
+  return null;
+}
+function semanaDoMes(d){ return Math.floor((d.getDate()-1)/7) + 1; }
+function ehUltimoDoMes(d){
+  var seguinte = new Date(d.getTime());
+  seguinte.setDate(d.getDate()+7);
+  return seguinte.getMonth() !== d.getMonth();
+}
+
+/* Uma data especial cai neste dia? */
+function caiNoDia(esp, data){
+  if(esp.quando === 'data'){
+    return esp.data === chaveData(data);
+  }
+  if(esp.dia !== data.getDay()) return false;
+  if(esp.semana === -1) return ehUltimoDoMes(data);
+  return semanaDoMes(data) === esp.semana;
+}
+
+/* Todas as celebrações dos próximos N dias, já em ordem cronológica. */
+function ocorrencias(nDias){
+  var base = new Date(); base.setHours(0,0,0,0);
+  var saida = [];
+  for(var i=0;i<nDias;i++){
+    var data = new Date(base.getTime());
+    data.setDate(base.getDate() + i);
+    dados.paroquias.forEach(function(p){
+      p.horarios.forEach(function(h){
+        if(h.dia === data.getDay()) saida.push(monta(p, h, data, false));
+      });
+      p.especiais.forEach(function(e){
+        if(caiNoDia(e, data)) saida.push(monta(p, e, data, true));
+      });
+    });
+  }
+  saida.sort(function(a,b){ return a.quando - b.quando; });
+  return saida;
+}
+function monta(p, h, data, especial){
+  var m = minutos(h.hora);
+  var quando = new Date(data.getFullYear(), data.getMonth(), data.getDate(), Math.floor(m/60), m%60);
+  return {
+    quando:quando, hora:h.hora, tipo:h.tipo,
+    titulo:h.titulo || h.tipo, nota:h.nota || '',
+    paroquia:p.nome, pid:p.id, especial:especial
+  };
+}
+function emPalavras(ms){
+  var min = Math.round(ms/60000);
+  if(min < 1) return 'começando agora';
+  if(min < 60) return 'em ' + min + ' min';
+  if(min < 1440){ var h = Math.floor(min/60), r = min%60; return 'em ' + h + 'h' + (r ? ' ' + r + 'min' : ''); }
+  var d = Math.round(min/1440);
+  return d === 1 ? 'amanhã' : 'em ' + d + ' dias';
+}
+
+/* ---------- navegação ---------- */
+function go(nova){
+  aba = nova;
+  ['hoje','semana','leituras','paroquias'].forEach(function(a){
+    document.getElementById('t'+'-'+a).className = (a === aba ? 'on' : '');
+  });
+  render();
+  window.scrollTo(0,0);
+}
+function render(){
+  var v = document.getElementById('view');
+  if(aba === 'hoje') v.innerHTML = telaHoje();
+  else if(aba === 'semana') v.innerHTML = telaSemana();
+  else if(aba === 'leituras') telaLeituras();
+  else v.innerHTML = telaParoquias();
+}
+
+/* ---------- tela: hoje ---------- */
+function telaHoje(){
+  if(!dados.paroquias.length){
+    return '<div class="empty"><p>Nenhuma paróquia ainda. Comece pelas igrejas que você frequenta.</p>' +
+           '<button class="btn primary" onclick="go(\'paroquias\')">Adicionar paróquia</button></div>';
+  }
+  var lista = ocorrencias(21);
+  if(!lista.length){
+    return '<div class="empty"><p>Suas paróquias ainda não têm horários.</p>' +
+           '<button class="btn primary" onclick="go(\'paroquias\')">Cadastrar horários</button></div>';
+  }
+
+  var agora = new Date();
+  var futuras = lista.filter(function(o){ return o.quando > agora; });
+  var prox = futuras[0];
+  var html = '';
+
+  if(prox){
+    var mesmoDia = prox.quando.toDateString() === agora.toDateString();
+    html += '<div class="hero">' +
+      '<div class="kicker">Próxima celebração</div>' +
+      '<div class="time">' + esc(prox.hora) + '</div>' +
+      '<div class="when">' + esc(prox.titulo) +
+        (mesmoDia ? '' : ' · ' + DIAS[prox.quando.getDay()] + ' ' + prox.quando.getDate() + '/' + (prox.quando.getMonth()+1)) +
+        ' · ' + emPalavras(prox.quando - agora) + '</div>' +
+      '<div class="where">' + esc(prox.paroquia) +
+        (prox.nota ? '<small>' + esc(prox.nota) + '</small>' : '') +
+      '</div></div>';
+  }
+
+  var hoje = lista.filter(function(o){ return o.quando.toDateString() === agora.toDateString(); });
+  html += '<div class="daygroup today"><h3>' + DIAS[agora.getDay()] + ', hoje</h3>';
+  if(!hoje.length) html += '<p class="status">Nada marcado para hoje nas suas paróquias.</p>';
+  else hoje.forEach(function(o){ html += linha(o, o.quando < agora); });
+  html += '</div>';
+  return html;
+}
+
+function linha(o, passou){
+  return '<div class="item' + (passou ? ' past' : '') + '">' +
+    '<span class="dot ' + (CLASSE[o.tipo]||'') + '"></span>' +
+    '<span class="hh">' + esc(o.hora) + '</span>' +
+    '<span class="body"><span class="kind">' + esc(o.titulo) +
+      (o.especial ? '<span class="star">✦</span>' : '') + '</span>' +
+      '<div class="par">' + esc(o.paroquia) + '</div>' +
+      (o.nota ? '<div class="note">' + esc(o.nota) + '</div>' : '') +
+    '</span></div>';
+}
+
+/* ---------- tela: semana ---------- */
+function telaSemana(){
+  var lista = ocorrencias(7);
+  if(!lista.length){
+    return '<div class="empty"><p>A semana aparece aqui assim que houver horários cadastrados.</p>' +
+           '<button class="btn primary" onclick="go(\'paroquias\')">Ir para paróquias</button></div>';
+  }
+  var agora = new Date();
+  var base = new Date(); base.setHours(0,0,0,0);
+  var html = '<div class="cols"><div>';
+
+  for(var i=0;i<7;i++){
+    var data = new Date(base.getTime()); data.setDate(base.getDate()+i);
+    var doDia = lista.filter(function(o){ return o.quando.toDateString() === data.toDateString(); });
+    if(i === 4) html += '</div><div>';
+    html += '<div class="daygroup' + (i === 0 ? ' today' : '') + '"><h3>' +
+      DIAS[data.getDay()] + (i === 0 ? ', hoje' : (i === 1 ? ', amanhã' : ' ' + data.getDate() + '/' + (data.getMonth()+1))) +
+      '</h3>';
+    if(!doDia.length) html += '<p class="status">Sem celebrações.</p>';
+    else doDia.forEach(function(o){ html += linha(o, o.quando < agora); });
+    html += '</div>';
+  }
+  return html + '</div></div>';
+}
+
+/* ---------- tela: leituras ---------- */
+function mudaDia(delta){
+  diaLeitura.setDate(diaLeitura.getDate() + delta);
+  telaLeituras();
+}
+function cabecalhoLeituras(){
+  var hoje = new Date();
+  var rotulo = diaLeitura.toDateString() === hoje.toDateString() ? 'hoje'
+    : DIAS[diaLeitura.getDay()];
+  return '<div class="litnav">' +
+    '<button class="btn" onclick="mudaDia(-1)" aria-label="Dia anterior">‹</button>' +
+    '<span class="dia"><b>' + diaLeitura.getDate() + ' de ' +
+      ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'][diaLeitura.getMonth()] +
+      '</b><span>' + rotulo + '</span></span>' +
+    '<button class="btn" onclick="mudaDia(1)" aria-label="Próximo dia">›</button>' +
+  '</div>';
+}
+
+function telaLeituras(){
+  var v = document.getElementById('view');
+  var chave = chaveData(diaLeitura);
+
+  if(cacheLit[chave]){ v.innerHTML = cabecalhoLeituras() + montaLeituras(cacheLit[chave]); return; }
+
+  v.innerHTML = cabecalhoLeituras() + '<p class="status">Baixando a liturgia...</p>';
+  var url = 'https://liturgia.up.railway.app/v2/?dia=' + diaLeitura.getDate() +
+            '&mes=' + (diaLeitura.getMonth()+1) + '&ano=' + diaLeitura.getFullYear();
+
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if(j.erro){ v.innerHTML = cabecalhoLeituras() + '<p class="status">' + esc(j.erro) + '</p>'; return; }
+      cacheLit[chave] = j;
+      limpaCache();
+      gravaChave(CHAVE_LIT, cacheLit);
+      if(aba === 'leituras') v.innerHTML = cabecalhoLeituras() + montaLeituras(j);
+    })
+    .catch(function(){
+      v.innerHTML = cabecalhoLeituras() +
+        '<p class="status">Não consegui baixar a liturgia. Ela precisa de internet; ' +
+        'os dias já abertos antes ficam guardados e funcionam sem conexão.</p>';
+    });
+}
+
+/* guarda no máximo 14 dias de leituras para não encher o aparelho */
+function limpaCache(){
+  var chaves = Object.keys(cacheLit).sort();
+  while(chaves.length > 14) delete cacheLit[chaves.shift()];
+}
+
+function paragrafos(texto){
+  return String(texto||'').split('\n').filter(function(l){ return l.trim(); })
+    .map(function(l){ return '<p>' + esc(l) + '</p>'; }).join('');
+}
+function bloco(rotulo, itens, aberto){
+  if(!itens || !itens.length) return '';
+  var html = '';
+  itens.forEach(function(it, i){
+    var ref = it.referencia || '';
+    html += '<details class="leitura"' + (aberto ? ' open' : '') + '>' +
+      '<summary><span class="rot">' + esc(rotulo) + (itens.length > 1 ? ' (' + (i+1) + ')' : '') +
+        '</span><span class="ref">' + esc(ref) + '</span></summary>' +
+      '<div class="texto">' +
+        (it.titulo ? '<p><em>' + esc(it.titulo) + '</em></p>' : '') +
+        (it.refrao ? '<p class="refrao">' + esc(it.refrao) + '</p>' : '') +
+        paragrafos(it.texto) +
+      '</div></details>';
+  });
+  return html;
+}
+
+function montaLeituras(j){
+  var cor = CORES_LIT[j.cor] || 'transparent';
+  var L = j.leituras || {};
+  var html = '<h2 class="titulo-lit"><span class="cor" style="background:' + cor + '"></span>' +
+             esc(j.liturgia || 'Liturgia do dia') + '</h2>';
+  if(j.cor) html += '<p class="status" style="padding:0 0 10px">Cor litúrgica: ' + esc(j.cor) + '</p>';
+
+  html += bloco('Primeira leitura', L.primeiraLeitura, false);
+  html += bloco('Salmo', L.salmo, false);
+  html += bloco('Segunda leitura', L.segundaLeitura, false);
+  html += bloco('Evangelho', L.evangelho, true);
+  if(L.extras && L.extras.length){
+    L.extras.forEach(function(x){ html += bloco(x.tipo || x.titulo || 'Outra leitura', [x], false); });
+  }
+  if(j.oracoes && j.oracoes.coleta){
+    html += bloco('Oração da coleta', [{texto:j.oracoes.coleta}], false);
+  }
+  html += '<p class="fonte">Textos litúrgicos da CNBB, obtidos da API pública ' +
+          '<a href="https://liturgia.up.railway.app/v2/" target="_blank" rel="noopener">liturgia.up.railway.app</a>. ' +
+          'Confira sempre com o folheto da sua paróquia.</p>';
+  return html;
+}
+
+/* ---------- tela: paróquias e ajustes ---------- */
+function telaParoquias(){
+  var minutosAviso = [10,15,30,45,60,90];
+  var html = '<div class="parish">' +
+    '<h3>Avisos antes das celebrações</h3>' +
+    '<label for="antec">Avisar com quanta antecedência</label>' +
+    '<select id="antec" onchange="mudaAntecedencia(this.value)">' +
+      minutosAviso.map(function(m){
+        return '<option value="' + m + '"' + (dados.avisar === m ? ' selected' : '') + '>' + m + ' minutos antes</option>';
+      }).join('') +
+    '</select>' +
+    '<div class="rowbtns" style="margin-top:14px">' +
+      '<button class="btn primary" onclick="baixarCalendario()">Enviar tudo para o calendário</button>' +
+      '<button class="btn" onclick="ligarAvisos()">' + (dados.avisos ? 'Avisos do app ligados' : 'Ligar avisos do app') + '</button>' +
+    '</div>' +
+    '<p class="aviso">O botão do calendário gera um arquivo com todos os horários e já com o alarme. ' +
+    'Abra o arquivo e o próprio calendário do celular passa a te avisar, mesmo com o app fechado — é o jeito confiável. ' +
+    'Os avisos do app só tocam enquanto ele está aberto na tela.</p>' +
+  '</div>';
+
+  html += '<div class="parish">' +
+    '<h3>Buscar igrejas perto de mim</h3>' +
+    '<p class="addr">Usa o GPS e o mapa aberto do OpenStreetMap.</p>' +
+    '<div class="rowbtns"><button class="btn" onclick="buscarPorGPS()">Usar minha localização</button></div>' +
+    '<label for="cidade">Ou procurar por cidade / bairro</label>' +
+    '<div class="two"><div><input type="text" id="cidade" placeholder="ex.: Tijuca, Rio de Janeiro"></div>' +
+    '<div style="flex:0 0 auto"><button class="btn" onclick="buscarPorNome()">Buscar</button></div></div>' +
+    '<div id="resultados"></div></div>';
+
+  html += '<div class="parish">' +
+    '<h3>Adicionar paróquia à mão</h3>' +
+    '<label for="novoNome">Nome da paróquia</label>' +
+    '<input type="text" id="novoNome" placeholder="Paróquia Nossa Senhora do Carmo">' +
+    '<label for="novoEnd">Endereço ou bairro (opcional)</label>' +
+    '<input type="text" id="novoEnd" placeholder="Rua das Laranjeiras, 100">' +
+    '<div class="rowbtns" style="margin-top:14px">' +
+      '<button class="btn primary" onclick="adicionarManual()">Adicionar paróquia</button></div></div>';
+
+  if(dados.paroquias.length){
+    html += '<h2 style="font-size:22px;margin:26px 0 12px">Minhas paróquias</h2>';
+    dados.paroquias.forEach(function(p){ html += cartaoParoquia(p); });
+  }
+
+  html += '<div class="foot">Tudo fica guardado só neste aparelho. ' +
+    '<button onclick="exportar()">Copiar meus dados</button> · ' +
+    '<button onclick="importar()">Colar dados de outro aparelho</button></div>';
+  return html;
+}
+
+function cartaoParoquia(p){
+  var semanais = p.horarios.slice().sort(function(a,b){
+    return (a.dia - b.dia) || (minutos(a.hora) - minutos(b.hora));
+  });
+
+  var html = '<div class="parish"><h3>' + esc(p.nome) + '</h3>';
+  if(p.endereco) html += '<p class="addr">' + esc(p.endereco) + '</p>';
+
+  if(semanais.length){
+    html += '<div class="chips">';
+    semanais.forEach(function(h){
+      html += '<span class="chip"><span class="dot ' + (CLASSE[h.tipo]||'') + '" style="margin:0"></span>' +
+        DIAS_CURTO[h.dia] + ' <b>' + esc(h.hora) + '</b> ' + esc(h.tipo) +
+        '<button class="x" title="Remover" onclick="removerHorario(\'' + p.id + '\',\'' + h.id + '\')">×</button></span>';
+    });
+    html += '</div>';
+  }else{
+    html += '<p class="addr">Nenhum horário semanal cadastrado.</p>';
+  }
+
+  if(p.especiais.length){
+    html += '<div class="chips">';
+    p.especiais.forEach(function(e){
+      var quando = e.quando === 'data'
+        ? e.data.split('-').reverse().slice(0,2).join('/')
+        : ORDINAL[e.semana] + ' ' + DIAS_CURTO[e.dia] + ' do mês';
+      html += '<span class="chip"><span class="star" style="margin:0">✦</span>' +
+        esc(e.titulo) + ' · ' + quando + ' <b>' + esc(e.hora) + '</b>' +
+        '<button class="x" title="Remover" onclick="removerEspecial(\'' + p.id + '\',\'' + e.id + '\')">×</button></span>';
+    });
+    html += '</div>';
+  }
+
+  html += '<div class="rowbtns">' +
+    '<button class="btn" onclick="abrirForm(\'horario\',\'' + p.id + '\')">Horário semanal</button>' +
+    '<button class="btn" onclick="abrirForm(\'especial\',\'' + p.id + '\')">Data especial</button>';
+  if(p.lat) html += '<a class="btn" href="https://www.google.com/maps/search/?api=1&query=' + p.lat + ',' + p.lon + '" target="_blank" rel="noopener" style="text-decoration:none">Mapa</a>';
+  html += '<button class="btn quiet" onclick="removerParoquia(\'' + p.id + '\')">Remover</button></div>';
+
+  /* formulário: horário semanal */
+  html += '<div class="form' + (formHorario === p.id ? ' open' : '') + '">' +
+    '<div class="two">' +
+      '<div><label for="tipo-' + p.id + '">O que é</label><select id="tipo-' + p.id + '">' +
+        TIPOS.map(function(t){ return '<option>' + t + '</option>'; }).join('') + '</select></div>' +
+      '<div><label for="hora-' + p.id + '">Horário</label>' +
+        '<input type="time" id="hora-' + p.id + '" value="19:00"></div>' +
+    '</div>' +
+    '<label>Dias da semana</label><div class="days">' +
+      DIAS_CURTO.map(function(d,i){
+        return '<label id="d-' + p.id + '-' + i + '" tabindex="0" onclick="this.classList.toggle(\'on\')" ' +
+          'onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();this.classList.toggle(\'on\')}">' + d + '</label>';
+      }).join('') + '</div>' +
+    '<label for="nota-' + p.id + '">Observação (opcional)</label>' +
+    '<input type="text" id="nota-' + p.id + '" placeholder="ex.: capela lateral">' +
+    '<div class="rowbtns" style="margin-top:14px">' +
+      '<button class="btn primary" onclick="salvarHorario(\'' + p.id + '\')">Salvar horário</button>' +
+      '<button class="btn quiet" onclick="abrirForm(null)">Cancelar</button></div></div>';
+
+  /* formulário: data especial */
+  html += '<div class="form' + (formEspecial === p.id ? ' open' : '') + '">' +
+    '<label for="et-' + p.id + '">O que é</label>' +
+    '<input type="text" id="et-' + p.id + '" placeholder="Festa do padroeiro, Missa do Crisma...">' +
+    '<label for="er-' + p.id + '">Quando acontece</label>' +
+    '<select id="er-' + p.id + '" onchange="trocaRepeticao(\'' + p.id + '\')">' +
+      '<option value="data">Numa data específica</option>' +
+      '<option value="mensal">Todo mês, num dia da semana</option>' +
+    '</select>' +
+    '<div id="bloco-data-' + p.id + '">' +
+      '<label for="ed-' + p.id + '">Data</label><input type="date" id="ed-' + p.id + '"></div>' +
+    '<div id="bloco-mensal-' + p.id + '" style="display:none"><div class="two">' +
+      '<div><label for="es-' + p.id + '">Qual semana</label><select id="es-' + p.id + '">' +
+        '<option value="1">1ª do mês</option><option value="2">2ª do mês</option>' +
+        '<option value="3">3ª do mês</option><option value="4">4ª do mês</option>' +
+        '<option value="-1">última do mês</option></select></div>' +
+      '<div><label for="ew-' + p.id + '">Dia</label><select id="ew-' + p.id + '">' +
+        DIAS_CURTO.map(function(d,i){ return '<option value="' + i + '">' + d + '</option>'; }).join('') +
+        '</select></div></div></div>' +
+    '<div class="two">' +
+      '<div><label for="eh-' + p.id + '">Horário</label><input type="time" id="eh-' + p.id + '" value="19:00"></div>' +
+      '<div><label for="ek-' + p.id + '">Tipo</label><select id="ek-' + p.id + '">' +
+        TIPOS.map(function(t){ return '<option>' + t + '</option>'; }).join('') + '</select></div>' +
+    '</div>' +
+    '<div class="rowbtns" style="margin-top:14px">' +
+      '<button class="btn primary" onclick="salvarEspecial(\'' + p.id + '\')">Salvar data</button>' +
+      '<button class="btn quiet" onclick="abrirForm(null)">Cancelar</button></div></div>';
+
+  return html + '</div>';
+}
+
+/* ---------- ações ---------- */
+function abrirForm(qual, pid){
+  formHorario = (qual === 'horario') ? pid : null;
+  formEspecial = (qual === 'especial') ? pid : null;
+  render();
+}
+function trocaRepeticao(pid){
+  var modo = document.getElementById('er-'+pid).value;
+  document.getElementById('bloco-data-'+pid).style.display = (modo === 'data' ? '' : 'none');
+  document.getElementById('bloco-mensal-'+pid).style.display = (modo === 'mensal' ? '' : 'none');
+}
+function mudaAntecedencia(v){ dados.avisar = parseInt(v,10); salvar(); agendarAvisos(); }
+
+function adicionarManual(){
+  var nome = document.getElementById('novoNome').value.trim();
+  if(!nome){ alert('Escreva o nome da paróquia.'); return; }
+  dados.paroquias.push({
+    id:id(), nome:nome, endereco:document.getElementById('novoEnd').value.trim(),
+    horarios:[], especiais:[]
+  });
+  salvar(); render();
+}
+
+function salvarHorario(pid){
+  var p = achaParoquia(pid); if(!p) return;
+  var hora = document.getElementById('hora-'+pid).value;
+  if(!hora){ alert('Escolha um horário.'); return; }
+  var escolhidos = [];
+  for(var i=0;i<7;i++){
+    var el = document.getElementById('d-'+pid+'-'+i);
+    if(el && el.classList.contains('on')) escolhidos.push(i);
+  }
+  if(!escolhidos.length){ alert('Escolha pelo menos um dia da semana.'); return; }
+  var tipo = document.getElementById('tipo-'+pid).value;
+  var nota = document.getElementById('nota-'+pid).value.trim();
+  escolhidos.forEach(function(dia){
+    p.horarios.push({id:id(), dia:dia, hora:hora, tipo:tipo, nota:nota});
+  });
+  formHorario = null; salvar(); render(); agendarAvisos();
+}
+
+function salvarEspecial(pid){
+  var p = achaParoquia(pid); if(!p) return;
+  var titulo = document.getElementById('et-'+pid).value.trim();
+  var hora = document.getElementById('eh-'+pid).value;
+  var tipo = document.getElementById('ek-'+pid).value;
+  var modo = document.getElementById('er-'+pid).value;
+  if(!titulo){ alert('Dê um nome a esta celebração.'); return; }
+  if(!hora){ alert('Escolha um horário.'); return; }
+
+  var novo = {id:id(), titulo:titulo, tipo:tipo, hora:hora, quando:modo};
+  if(modo === 'data'){
+    var d = document.getElementById('ed-'+pid).value;
+    if(!d){ alert('Escolha a data.'); return; }
+    novo.data = d;
+  }else{
+    novo.semana = parseInt(document.getElementById('es-'+pid).value,10);
+    novo.dia = parseInt(document.getElementById('ew-'+pid).value,10);
+  }
+  p.especiais.push(novo);
+  formEspecial = null; salvar(); render(); agendarAvisos();
+}
+
+function removerHorario(pid, hid){
+  var p = achaParoquia(pid); if(!p) return;
+  p.horarios = p.horarios.filter(function(h){ return h.id !== hid; });
+  salvar(); render();
+}
+function removerEspecial(pid, eid){
+  var p = achaParoquia(pid); if(!p) return;
+  p.especiais = p.especiais.filter(function(e){ return e.id !== eid; });
+  salvar(); render();
+}
+function removerParoquia(pid){
+  var p = achaParoquia(pid); if(!p) return;
+  if(!confirm('Remover "' + p.nome + '" com todos os horários dela?')) return;
+  dados.paroquias = dados.paroquias.filter(function(x){ return x.id !== pid; });
+  salvar(); render();
+}
+
+/* ---------- avisos dentro do app (só com o app aberto) ---------- */
+var timers = [];
+function ligarAvisos(){
+  if(!('Notification' in window)){ alert('Este navegador não faz notificações.'); return; }
+  Notification.requestPermission().then(function(perm){
+    if(perm === 'granted'){
+      dados.avisos = true; salvar(); agendarAvisos(); render();
+    }else{
+      alert('As notificações ficaram bloqueadas. Você ainda pode usar o calendário do celular, que é mais confiável.');
+    }
+  });
+}
+function agendarAvisos(){
+  timers.forEach(clearTimeout); timers = [];
+  if(!dados.avisos || !('Notification' in window) || Notification.permission !== 'granted') return;
+  var agora = Date.now();
+  ocorrencias(2).forEach(function(o){
+    var quando = o.quando.getTime() - dados.avisar*60000;
+    var falta = quando - agora;
+    if(falta > 0 && falta < 6*3600*1000){
+      timers.push(setTimeout(function(){
+        try{ new Notification(o.titulo + ' às ' + o.hora, {body:o.paroquia}); }catch(e){}
+      }, falta));
+    }
+  });
+}
+
+/* ---------- enviar para o calendário do celular (.ics) ---------- */
+function fmtICS(d){
+  return d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate()) + 'T' +
+         pad(d.getHours()) + pad(d.getMinutes()) + '00';
+}
+function escICS(s){
+  return String(s||'').replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
+}
+function proximaData(testa){          // procura nos próximos 400 dias
+  var d = new Date(); d.setHours(0,0,0,0);
+  for(var i=0;i<400;i++){
+    if(testa(d)) return new Date(d.getTime());
+    d.setDate(d.getDate()+1);
+  }
+  return null;
+}
+function vevento(titulo, local, inicio, rrule){
+  var fim = new Date(inicio.getTime() + 60*60000);
+  var carimbo = new Date();
+  return ['BEGIN:VEVENT',
+    'UID:' + id() + '@sino',
+    'DTSTAMP:' + fmtICS(carimbo),
+    'DTSTART:' + fmtICS(inicio),
+    'DTEND:' + fmtICS(fim),
+    rrule ? 'RRULE:' + rrule : null,
+    'SUMMARY:' + escICS(titulo),
+    'LOCATION:' + escICS(local),
+    'BEGIN:VALARM',
+    'TRIGGER:-PT' + dados.avisar + 'M',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:' + escICS(titulo),
+    'END:VALARM',
+    'END:VEVENT'].filter(Boolean).join('\r\n');
+}
+
+function baixarCalendario(){
+  var eventos = [];
+  dados.paroquias.forEach(function(p){
+    p.horarios.forEach(function(h){
+      var m = minutos(h.hora);
+      var dia = proximaData(function(d){ return d.getDay() === h.dia; });
+      if(!dia) return;
+      dia.setHours(Math.floor(m/60), m%60, 0, 0);
+      eventos.push(vevento(h.tipo + ' — ' + p.nome, p.endereco || p.nome, dia,
+        'FREQ=WEEKLY;BYDAY=' + ICS_DIA[h.dia]));
+    });
+    p.especiais.forEach(function(e){
+      var m = minutos(e.hora), inicio, regra = null;
+      if(e.quando === 'data'){
+        var partes = e.data.split('-');
+        inicio = new Date(+partes[0], partes[1]-1, +partes[2], Math.floor(m/60), m%60);
+      }else{
+        inicio = proximaData(function(d){ return caiNoDia(e, d); });
+        if(!inicio) return;
+        inicio.setHours(Math.floor(m/60), m%60, 0, 0);
+        regra = 'FREQ=MONTHLY;BYDAY=' + e.semana + ICS_DIA[e.dia];
+      }
+      eventos.push(vevento(e.titulo + ' — ' + p.nome, p.endereco || p.nome, inicio, regra));
+    });
+  });
+
+  if(!eventos.length){ alert('Não há horários cadastrados ainda.'); return; }
+
+  var ics = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Sino//PT-BR','CALSCALE:GREGORIAN']
+    .concat(eventos).concat(['END:VCALENDAR']).join('\r\n');
+
+  var blob = new Blob([ics], {type:'text/calendar;charset=utf-8'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'minhas-missas.ics';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+}
+
+/* ---------- busca de igrejas (OpenStreetMap) ---------- */
+function status(msg){ document.getElementById('resultados').innerHTML = '<p class="status">' + esc(msg) + '</p>'; }
+
+function buscarPorGPS(){
+  if(!navigator.geolocation){ status('Este navegador não oferece localização.'); return; }
+  status('Procurando sua localização...');
+  navigator.geolocation.getCurrentPosition(
+    function(pos){ buscarIgrejas(pos.coords.latitude, pos.coords.longitude, 3000); },
+    function(){ status('Não consegui a localização. Verifique a permissão do GPS, ou procure pela cidade abaixo.'); },
+    {enableHighAccuracy:true, timeout:12000, maximumAge:60000}
+  );
+}
+function buscarPorNome(){
+  var q = document.getElementById('cidade').value.trim();
+  if(!q){ status('Escreva uma cidade ou bairro.'); return; }
+  status('Procurando "' + q + '"...');
+  fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&q=' + encodeURIComponent(q))
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if(!j.length){ status('Não encontrei esse lugar. Tente escrever cidade e estado.'); return; }
+      buscarIgrejas(parseFloat(j[0].lat), parseFloat(j[0].lon), 4000);
+    })
+    .catch(function(){ status('A busca falhou. Verifique sua conexão.'); });
+}
+function distancia(la1, lo1, la2, lo2){
+  var R = 6371000, r = Math.PI/180;
+  var a = Math.sin((la2-la1)*r/2), b = Math.sin((lo2-lo1)*r/2);
+  var x = a*a + Math.cos(la1*r)*Math.cos(la2*r)*b*b;
+  return Math.round(2*R*Math.asin(Math.sqrt(x)));
+}
+var pendentes = {};
+function buscarIgrejas(lat, lon, raio){
+  status('Procurando igrejas num raio de ' + (raio/1000) + ' km...');
+  var q = '[out:json][timeout:25];(' +
+    'node["amenity"="place_of_worship"]["religion"="christian"](around:'+raio+','+lat+','+lon+');' +
+    'way["amenity"="place_of_worship"]["religion"="christian"](around:'+raio+','+lat+','+lon+');' +
+    ');out center tags 80;';
+
+  fetch('https://overpass-api.de/api/interpreter', {
+    method:'POST',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:'data=' + encodeURIComponent(q)
+  })
+  .then(function(r){ return r.json(); })
+  .then(function(j){
+    var achados = (j.elements||[]).map(function(e){
+      var t = e.tags||{};
+      var la = e.lat || (e.center && e.center.lat);
+      var lo = e.lon || (e.center && e.center.lon);
+      if(!la || !t.name) return null;
+      var den = (t.denomination||'').toLowerCase();
+      if(den && den.indexOf('catholic') < 0) return null;
+      return {
+        nome:t.name,
+        endereco:[t['addr:street'], t['addr:suburb'], t['addr:city']].filter(Boolean).join(', '),
+        lat:la, lon:lo, dist:distancia(lat, lon, la, lo),
+        certa:den.indexOf('catholic') >= 0
+      };
+    }).filter(Boolean);
+
+    achados.sort(function(a,b){ return a.dist - b.dist; });
+    if(!achados.length && raio < 12000){ buscarIgrejas(lat, lon, raio*2); return; }
+    if(!achados.length){ status('Nada encontrado por aqui no OpenStreetMap. Adicione a paróquia à mão logo abaixo.'); return; }
+
+    var html = '';
+    achados.slice(0,20).forEach(function(a, i){
+      pendentes[i] = a;
+      html += '<div class="result"><span class="body">' +
+        '<div class="nm">' + esc(a.nome) + (a.certa ? '' : ' <span class="meta">(confirmar se é católica)</span>') + '</div>' +
+        '<div class="meta">' + (a.dist < 1000 ? a.dist + ' m' : (a.dist/1000).toFixed(1) + ' km') +
+          (a.endereco ? ' · ' + esc(a.endereco) : '') + '</div></span>' +
+        '<button class="btn" onclick="adicionarAchada(' + i + ')">Adicionar</button></div>';
+    });
+    document.getElementById('resultados').innerHTML = html;
+  })
+  .catch(function(){
+    status('A busca no mapa falhou. Ela precisa de internet e de uma página publicada (https).');
+  });
+}
+function adicionarAchada(i){
+  var a = pendentes[i]; if(!a) return;
+  dados.paroquias.push({id:id(), nome:a.nome, endereco:a.endereco, lat:a.lat, lon:a.lon, horarios:[], especiais:[]});
+  salvar(); render();
+}
+
+/* ---------- levar os dados de um aparelho para o outro ---------- */
+function exportar(){
+  var texto = JSON.stringify(dados);
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(texto).then(function(){
+      alert('Copiado. Cole no outro aparelho em "Colar dados de outro aparelho".');
+    });
+  }else{
+    prompt('Copie este texto:', texto);
+  }
+}
+function importar(){
+  var texto = prompt('Cole aqui os dados copiados do outro aparelho:');
+  if(!texto) return;
+  try{
+    var novo = JSON.parse(texto);
+    if(!novo || !Array.isArray(novo.paroquias)) throw new Error();
+    novo.paroquias.forEach(function(p){ p.horarios = p.horarios||[]; p.especiais = p.especiais||[]; });
+    dados = novo;
+    if(typeof dados.avisar !== 'number') dados.avisar = 30;
+    salvar(); render(); agendarAvisos();
+    alert('Pronto, seus dados foram carregados.');
+  }catch(e){
+    alert('Esse texto não parece ser um backup do Sino.');
+  }
+}
+
+/* ---------- início ---------- */
+render();
+agendarAvisos();
+setInterval(function(){ if(aba === 'hoje') render(); }, 60000);
+</script>
+</body>
+</html>
