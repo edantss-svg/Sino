@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SANES — Qualidade</title>
+<base target="_blank">
+<style>
+  :root{
+    --bg:#F6F8FA; --card:#FFFFFF; --text:#1C2B36; --dim:#5B6B78; --line:#DCE3E9;
+    --brand:#0F5C74; --brand-2:#E6F1F4; --accent:#2E8B6E; --radius:12px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.6;font-size:16px}
+  a{color:var(--brand)}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+  
+  header.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-top:12px;padding-bottom:12px;flex-wrap:wrap}
+  .logo{font-weight:700;color:var(--brand);font-size:20px;text-decoration:none}
+  .logo small{display:block;font-weight:500;color:var(--dim);font-size:12px}
+  nav{display:flex;gap:4px;flex-wrap:wrap}
+  nav a{text-decoration:none;color:var(--text);font-size:14px;padding:6px 10px;border-radius:8px}
+  nav a:hover{background:var(--brand-2);color:var(--brand)}
+  .hero{background:linear-gradient(135deg,#0F5C74,#16384A);color:#fff;padding:56px 0}
+  .hero h1{margin:0 0 12px;font-size:clamp(28px,5vw,42px);line-height:1.15}
+  .hero p{max-width:680px;opacity:.92;margin:0 0 22px}
+  .btn{display:inline-block;padding:11px 18px;border-radius:10px;font-weight:600;text-decoration:none;margin:4px 8px 4px 0}
+  .btn-wa{background:#25D366;color:#073B1F}
+  .btn-ghost{border:1px solid rgba(255,255,255,.6);color:#fff}
+  section{padding:48px 0;border-bottom:1px solid var(--line)}
+  h2{color:var(--brand);font-size:26px;margin:0 0 18px}
+  .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .card h3{margin:0 0 8px;font-size:18px}
+  .card p{margin:0;color:var(--dim)}
+  .pills{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+  .pills li{background:var(--brand-2);color:var(--brand);padding:6px 12px;border-radius:999px;font-size:14px;font-weight:600}
+  details{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:10px}
+  summary{cursor:pointer;padding:16px 18px;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:12px}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";color:var(--brand);font-size:20px;line-height:1}
+  details[open] summary::after{content:"–"}
+  details .ans{padding:0 18px 16px;color:var(--text)}
+  details .ans h4{margin:14px 0 4px;color:var(--brand);font-size:15px}
+  details .ans ul{margin:4px 0;padding-left:20px}
+  .tag{display:inline-block;font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+  .kpis{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-top:8px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:14px}
+  .kpi b{display:block;font-size:26px;color:var(--brand)}
+  .kpi span{font-size:14px;color:var(--dim)}
+  .doc{white-space:pre-line;font-size:14.5px;color:var(--text);margin-top:10px}
+  .contact dt{font-weight:600;margin-top:10px}
+  .contact dd{margin:0;color:var(--dim)}
+  footer{padding:28px 0;color:var(--dim);font-size:14px}
+  @media (max-width:640px){ header.top{position:static} section{padding:36px 0} }
+
+ section{border-bottom:0;padding:16px 0}
+ body{background:transparent}
+</style>
+</head>
+<body>
+<section id="qualidade">
+  <div class="wrap">
+    <h2>Qualidade e Segurança do Paciente</h2>
+    <p>A SANES participa ativamente do processo de Acreditação em Saúde e conta com Núcleo próprio de Qualidade e Segurança do Paciente, dedicado à revisão contínua de protocolos assistenciais, gestão prospectiva de riscos e monitoramento de indicadores.</p>
+    <p><b>Equipe da Qualidade:</b> Núcleo de Gestão da Qualidade e Segurança do Paciente SANES — atuação multiprofissional integrada entre coordenação médica e enfermagem da qualidade.</p>
+    <h3 style="margin-top:22px">Destaques do trimestre (maio a julho/2026)</h3>
+    <div class="kpis">
+      <div class="kpi"><b>0%</b><span>Mortalidade atribuída ao procedimento anestésico</span></div>
+      <div class="kpi"><b>91,08%</b><span>Consulta pré-anestésica em eletivos (julho · meta ≥ 90%)</span></div>
+      <div class="kpi"><b>2,68%</b><span>Dor aguda na SRPA em julho (era 16,00% em maio)</span></div>
+      <div class="kpi"><b>84,24%</b><span>Estratificação de risco ASA (julho · meta ≥ 70%)</span></div>
+    </div>
+    <h3 style="margin-top:22px">Os 5 grupos de indicadores</h3>
+    <div class="grid">
+      <div class="card"><h3>Segurança do Paciente</h3><p>Eventos adversos, hipotermia (≤ 5%), anafilaxia, via aérea difícil não prevista (≤ 15%), PCR intraoperatória e segurança medicamentosa.</p></div>
+      <div class="card"><h3>Processos Assistenciais</h3><p>Adesão a protocolos, transição de cuidado, consulta pré-anestésica (≥ 90%) e estratificação ASA (≥ 70%).</p></div>
+      <div class="card"><h3>Experiência do Paciente</h3><p>NPS (meta ≥ 85% em 2026), elogios e reclamações, dor pós-operatória e conforto na recuperação.</p></div>
+      <div class="card"><h3>Pessoas e Desenvolvimento</h3><p>Treinamentos obrigatórios, educação continuada, simulações realísticas e competências críticas.</p></div>
+      <div class="card"><h3>Gestão e Sustentabilidade</h3><p>Glosas (&lt; 3%), conformidade documental de prontuários e equilíbrio custo/receita.</p></div>
+    </div>
+  </div>
+</section>
+</body>
+</html>
