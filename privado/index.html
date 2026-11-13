@@ -1007,7 +1007,12 @@ function vLiturgia(v){
       if(room==='liturgia' && ymd(litDay)===k) showLit(j);
     })
     .catch(function(){
-      var el=$('#litTexts'); if(el && ymd(litDay)===k) el.innerHTML='<div class="empty">Não consegui baixar as leituras agora (é preciso internet). Os dias já abertos ficam guardados e funcionam sem conexão.</div>';
+      var el=$('#litTexts'); if(!el || ymd(litDay)!==k) return;
+      el.innerHTML='<div class="empty">'+(inClaude?'O link do Claude bloqueia conexões externas, então as leituras não podem ser baixadas aqui dentro. No endereço próprio do Cofre (GitHub Pages) elas carregam normalmente.':'Não consegui baixar as leituras agora (é preciso internet). Os dias já abertos ficam guardados e funcionam sem conexão.')+
+        '<div class="btns" style="justify-content:center">'+(inClaude?'':'<button class="btn" id="litRetry">Tentar de novo</button>')+
+        '<a class="btn" href="https://liturgia.cnbb.org.br/" target="_blank" rel="noopener noreferrer">Abrir leituras no site da CNBB</a>'+
+        '<a class="btn" href="https://liturgia.cancaonova.com/pb/" target="_blank" rel="noopener noreferrer">Abrir na Canção Nova</a></div></div>';
+      var rb=$('#litRetry'); if(rb) rb.onclick=function(){ vLiturgia($('#view')); };
     });
 }
 function paras(t){ return String(t||'').split('\n').filter(function(l){return l.trim();}).map(function(l){ return '<p>'+esc(l)+'</p>'; }).join(''); }

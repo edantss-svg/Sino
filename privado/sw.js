@@ -1,6 +1,6 @@
 /* Cofre — service worker: deixa o app funcionando offline e permite notificações no celular.
    Guarda só os arquivos do aplicativo; os dados cifrados ficam no armazenamento do navegador. */
-var CACHE = 'cofre-app-v2';
+var CACHE = 'cofre-app-v3';
 var FILES = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', function (e) {
