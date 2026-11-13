@@ -1,0 +1,1216 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://liturgia.up.railway.app; base-uri 'none'; form-action 'none'">
+<title>Cofre</title>
+<meta name="theme-color" content="#14161c">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<style>
+:root{
+  --bg:#f4f2ee; --raised:#ffffff; --sunk:#ebe8e2; --line:#dcd7ce;
+  --text:#1d1f24; --dim:#676b75; --accent:#8a6a1f; --accent-ink:#ffffff;
+  --ok:#2f7a4b; --warn:#a66a10; --bad:#b23b3b; --info:#3b5fa6;
+  --radius:12px; --shadow:0 1px 2px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.05);
+  --font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#14161c; --raised:#1d2028; --sunk:#181a21; --line:#2c303b;
+    --text:#e8e6e1; --dim:#9aa0ad; --accent:#d8b44a; --accent-ink:#1a1405;
+    --ok:#6fbf8a; --warn:#e0a84a; --bad:#e07a7a; --info:#86a6e6;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14161c; --raised:#1d2028; --sunk:#181a21; --line:#2c303b;
+  --text:#e8e6e1; --dim:#9aa0ad; --accent:#d8b44a; --accent-ink:#1a1405;
+  --ok:#6fbf8a; --warn:#e0a84a; --bad:#e07a7a; --info:#86a6e6;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.25); color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow-x:clip}
+body{background:var(--bg);color:var(--text);font:15px/1.5 var(--font);-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+h1,h2,h3{margin:0;line-height:1.25}
+h1{font:600 22px/1.2 var(--serif)}
+h2{font:600 18px/1.3 var(--serif)}
+h3{font-size:15px}
+a{color:var(--accent)}
+.hidden{display:none!important}
+.muted{color:var(--dim)}
+.small{font-size:13px}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- login ---------- */
+#lock{min-height:100%;display:grid;place-items:center;padding:24px 16px}
+.lockbox{width:100%;max-width:360px;background:var(--raised);border:1px solid var(--line);border-radius:18px;padding:28px 22px;box-shadow:var(--shadow)}
+.lockbox .seal{width:52px;height:52px;margin:0 auto 14px;display:block}
+.lockbox h1{text-align:center}
+.lockbox p{text-align:center;margin:6px 0 18px}
+.err{color:var(--bad);font-size:13px;min-height:20px;margin-top:8px;text-align:center}
+
+/* ---------- campos ---------- */
+label{display:block;font-size:13px;color:var(--dim);margin:10px 0 4px}
+input,select,textarea{width:100%;background:var(--sunk);border:1px solid var(--line);border-radius:10px;padding:10px 12px;outline:none;min-height:42px}
+textarea{min-height:80px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+input[type=checkbox]{width:18px;height:18px;min-height:0;accent-color:var(--accent);vertical-align:middle}
+.check{display:flex;gap:8px;align-items:center;color:var(--text);font-size:14px;margin:12px 0 4px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 10px}
+@media (max-width:420px){.row3{grid-template-columns:1fr 1fr}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--raised);border-radius:10px;padding:9px 14px;min-height:40px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--dim)}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+.btn.danger{color:var(--bad)}
+.btn.ghost{background:transparent;border-color:transparent}
+.btn.sm{min-height:32px;padding:5px 10px;font-size:13px}
+.btn.block{width:100%;margin-top:16px}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+
+/* ---------- casca ---------- */
+#app{display:grid;grid-template-columns:232px 1fr;min-height:100%}
+nav.side{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);padding:18px 12px;display:flex;flex-direction:column;gap:2px;background:var(--sunk)}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 10px 18px;font:600 19px var(--serif)}
+.brand svg{width:26px;height:26px}
+.navbtn{display:flex;align-items:center;gap:12px;width:100%;padding:10px 12px;border:0;background:transparent;border-radius:10px;cursor:pointer;text-align:left;color:var(--dim)}
+.navbtn svg{width:19px;height:19px;flex:none}
+.navbtn:hover{background:var(--raised);color:var(--text)}
+.navbtn.on{background:var(--raised);color:var(--text);font-weight:600;box-shadow:var(--shadow)}
+.navbtn .count{margin-left:auto;background:var(--bad);color:#fff;border-radius:99px;font-size:11px;padding:1px 7px;font-weight:600}
+.side .spacer{flex:1}
+main{min-width:0;padding:22px 28px 40px;max-width:1040px;width:100%}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.top h1{flex:1}
+.iconbtn{position:relative;width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--raised);display:grid;place-items:center;cursor:pointer}
+.iconbtn svg{width:19px;height:19px}
+.iconbtn .dot{position:absolute;top:-4px;right:-4px;background:var(--bad);color:#fff;font-size:10px;font-weight:700;border-radius:99px;min-width:18px;height:18px;display:grid;place-items:center;padding:0 4px}
+nav.bottom{display:none}
+
+@media (max-width:820px){
+  #app{grid-template-columns:1fr}
+  nav.side{display:none}
+  main{padding:14px 16px calc(84px + env(safe-area-inset-bottom))}
+  nav.bottom{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--raised);border-top:1px solid var(--line);padding:6px 4px calc(6px + env(safe-area-inset-bottom));overflow-x:auto;scrollbar-width:none}
+  nav.bottom::-webkit-scrollbar{display:none}
+  nav.bottom .navbtn{flex:1 1 0;min-width:0;flex-direction:column;gap:2px;padding:6px 2px;font-size:10.5px;text-align:center;justify-content:center;box-shadow:none}
+  nav.bottom .navbtn.on{background:var(--sunk)}
+  nav.bottom .navbtn .count{position:absolute;margin:0;transform:translate(12px,-4px)}
+  nav.bottom .navbtn{position:relative}
+  nav.bottom .navbtn .lbl{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .item{flex-wrap:wrap}
+  .item .side-r{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding-left:60px;text-align:left}
+  .item .side-r .acts{margin-top:0}
+  .tabs{display:grid;grid-template-columns:1fr 1fr}
+  .toolbar>span{display:none}
+  .toolbar>.btn{flex:1 1 40%}
+  .toolbar .chips{width:100%}
+}
+
+/* ---------- cartões ---------- */
+.card{background:var(--raised);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px}
+.grid>*{min-width:0}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media (max-width:820px){.g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g2{grid-template-columns:1fr}}
+.stat .k{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em}
+.stat .v{font-size:22px;font-weight:650;margin-top:2px}
+.stat .s{font-size:12px;color:var(--dim)}
+.sect{margin:22px 0 10px;display:flex;align-items:center;gap:10px}
+.sect h2{flex:1}
+
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.toolbar input,.toolbar select{width:auto;flex:1 1 160px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--raised);border-radius:99px;padding:5px 12px;font-size:13px;cursor:pointer}
+.chip.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;gap:12px;align-items:flex-start;background:var(--raised);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.item .main{flex:1;min-width:0}
+.item .t{font-weight:600;overflow-wrap:anywhere}
+.item .m{font-size:13px;color:var(--dim);overflow-wrap:anywhere}
+.item .side-r{text-align:right;flex:none}
+.item .acts{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;margin-top:6px}
+.item.done{opacity:.6}
+.datebox{flex:none;width:48px;text-align:center;border-radius:10px;background:var(--sunk);padding:4px 0}
+.datebox b{display:block;font-size:18px;line-height:1.1}
+.datebox span{font-size:11px;text-transform:uppercase;color:var(--dim)}
+.tag{display:inline-block;font-size:11.5px;border-radius:99px;padding:1px 8px;border:1px solid var(--line);color:var(--dim);margin-right:4px}
+.tag.ok{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 40%,transparent)}
+.tag.warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 40%,transparent)}
+.tag.bad{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 40%,transparent)}
+.tag.info{color:var(--info);border-color:color-mix(in srgb,var(--info) 40%,transparent)}
+.empty{text-align:center;color:var(--dim);padding:28px 10px;border:1px dashed var(--line);border-radius:12px}
+
+/* ---------- avisos ---------- */
+.alert{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--raised)}
+.alert .bar{width:4px;align-self:stretch;border-radius:4px;background:var(--info);flex:none}
+.alert.bad .bar{background:var(--bad)} .alert.warn .bar{background:var(--warn)} .alert.ok .bar{background:var(--ok)}
+.alert .main{flex:1;min-width:0}
+.alert .t{font-weight:600;font-size:14px}
+.alert .m{font-size:12.5px;color:var(--dim)}
+
+#drawer{position:fixed;inset:0;z-index:40;display:flex;justify-content:flex-end;background:rgba(0,0,0,.35)}
+#drawer .panel{width:min(420px,100%);height:100%;background:var(--bg);border-left:1px solid var(--line);padding:18px 16px;overflow:auto;display:flex;flex-direction:column;gap:10px}
+
+/* ---------- diálogo ---------- */
+dialog{border:1px solid var(--line);border-radius:16px;padding:0;background:var(--raised);color:var(--text);width:min(520px,calc(100% - 24px));max-height:calc(100% - 24px);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+dialog form{padding:18px 18px 16px}
+dialog .dhead{display:flex;align-items:center;margin-bottom:6px}
+dialog .dhead h2{flex:1}
+
+/* ---------- calculadora ---------- */
+.result{margin-top:14px;padding:12px 14px;border-radius:10px;background:var(--sunk);border:1px solid var(--line)}
+.result .big{font-size:20px;font-weight:650}
+.tabs{display:flex;gap:4px;background:var(--sunk);border:1px solid var(--line);border-radius:11px;padding:4px;margin-bottom:14px;overflow-x:auto}
+.tabs button{flex:1;border:0;background:transparent;border-radius:8px;padding:8px 10px;cursor:pointer;color:var(--dim);white-space:nowrap}
+.tabs button.on{background:var(--raised);color:var(--text);font-weight:600;box-shadow:var(--shadow)}
+
+/* ---------- liturgia ---------- */
+.litbar{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.litbar .d{flex:1;text-align:center}
+.litbar .d b{display:block;font:600 17px var(--serif)}
+.color-dot{display:inline-block;width:12px;height:12px;border-radius:50%;border:1px solid rgba(0,0,0,.25);vertical-align:-1px;margin-right:6px}
+details.leitura{background:var(--raised);border:1px solid var(--line);border-radius:12px;margin-bottom:8px}
+details.leitura summary{cursor:pointer;padding:12px 14px;display:flex;gap:10px;align-items:baseline;list-style:none}
+details.leitura summary::-webkit-details-marker{display:none}
+details.leitura summary .rot{font-weight:600}
+details.leitura summary .ref{color:var(--dim);font-size:13px;margin-left:auto;text-align:right}
+details.leitura .texto{padding:0 16px 14px;font:16.5px/1.65 var(--serif)}
+details.leitura .texto p{margin:0 0 .6em}
+.refrao{font-style:italic;color:var(--accent)}
+
+.toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--text);color:var(--bg);padding:10px 16px;border-radius:10px;z-index:60;font-size:14px;box-shadow:var(--shadow);max-width:calc(100% - 32px)}
+@media (min-width:821px){.toast{bottom:24px}}
+.privacy-shield{position:fixed;inset:0;background:var(--bg);z-index:100;display:grid;place-items:center}
+</style>
+</head>
+<body>
+
+<!-- ======================= TELA DE ENTRADA ======================= -->
+<section id="lock">
+  <div class="lockbox">
+    <svg class="seal" viewBox="0 0 48 48" aria-hidden="true"><rect x="6" y="20" width="36" height="24" rx="5" fill="none" stroke="currentColor" stroke-width="3"/><path d="M15 20v-6a9 9 0 0 1 18 0v6" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="24" cy="31" r="3" fill="currentColor"/><path d="M24 34v4" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+    <h1 id="lockTitle">Cofre</h1>
+    <p class="muted small" id="lockSub">Digite sua senha para entrar.</p>
+    <form id="lockForm" autocomplete="off">
+      <div id="setupFields" class="hidden">
+        <label for="pwName">Como devo te chamar? (opcional)</label>
+        <input id="pwName" maxlength="40" autocomplete="off">
+      </div>
+      <label for="pw">Senha</label>
+      <input id="pw" type="password" autocomplete="current-password" required minlength="1">
+      <div id="setupFields2" class="hidden">
+        <label for="pw2">Repita a senha</label>
+        <input id="pw2" type="password" autocomplete="new-password">
+        <p class="muted small" style="text-align:left;margin:10px 0 0">Use ao menos 10 caracteres. <b>Não existe recuperação</b>: sem a senha, os dados não podem ser abertos por ninguém — nem por você.</p>
+      </div>
+      <button class="btn primary block" id="lockBtn" type="submit">Entrar</button>
+      <div class="err" id="lockErr" role="alert"></div>
+    </form>
+    <p class="muted small" id="restoreLine" style="margin:4px 0 0"><a href="#" id="restoreLink">Restaurar de um backup</a></p>
+  </div>
+</section>
+
+<!-- ======================= APLICATIVO ======================= -->
+<div id="app" class="hidden">
+  <nav class="side" id="sideNav" aria-label="Salas"></nav>
+  <main>
+    <div class="top">
+      <h1 id="pageTitle">Painel</h1>
+      <button class="iconbtn" id="bellBtn" aria-label="Avisos" title="Avisos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        <span class="dot hidden" id="bellDot">0</span>
+      </button>
+      <button class="iconbtn" id="lockNow" aria-label="Trancar agora" title="Trancar agora">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+      </button>
+    </div>
+    <div id="view"></div>
+  </main>
+  <nav class="bottom" id="bottomNav" aria-label="Salas"></nav>
+</div>
+
+<div id="drawer" class="hidden" role="dialog" aria-label="Central de avisos">
+  <div class="panel" id="drawerPanel"></div>
+</div>
+
+<dialog id="dlg"><form id="dlgForm" method="dialog"></form></dialog>
+<input type="file" id="fileIn" accept=".cofre,.json,application/json" class="hidden">
+
+<script>
+'use strict';
+/* =====================================================================
+   COFRE — site pessoal privativo
+   - Tudo fica neste aparelho, cifrado com AES-GCM 256.
+   - A chave é derivada da senha (PBKDF2-SHA256, 600 mil iterações) e
+     existe só na memória enquanto o cofre está aberto.
+   - Nenhum dado pessoal sai do aparelho. A única conexão externa é a
+     busca das leituras do dia (envia apenas a data).
+   ===================================================================== */
+
+var STORE = 'cofre.v1';        // cofre cifrado
+var STORE_HINT = 'cofre.hint'; // só horários de aviso (sem conteúdo), opcional
+var STORE_TRY = 'cofre.try';   // controle de tentativas erradas
+var STORE_LIT = 'cofre.lit';   // cache das leituras (textos públicos)
+var ITER = 600000;
+
+var key = null;      // CryptoKey (não exportável) — só na memória
+var salt = null;
+var D = null;        // dados abertos — só na memória
+var room = 'painel';
+var lastAct = Date.now();
+var saveTimer = null;
+
+/* ---------------- utilidades ---------------- */
+function $(s){ return document.querySelector(s); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+function uid(){ var a = new Uint8Array(8); crypto.getRandomValues(a); return Array.from(a,function(b){return b.toString(16).padStart(2,'0');}).join(''); }
+function pad(n){ return String(n).padStart(2,'0'); }
+function b64(buf){ var s=''; new Uint8Array(buf).forEach(function(b){s+=String.fromCharCode(b);}); return btoa(s); }
+function unb64(s){ var bin=atob(s), a=new Uint8Array(bin.length); for(var i=0;i<bin.length;i++) a[i]=bin.charCodeAt(i); return a; }
+function lsGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k,v); return true; }catch(e){ return false; } }
+function lsDel(k){ try{ localStorage.removeItem(k); }catch(e){} }
+
+var MESES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+var MES3 = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+var SEMANA = ['domingo','segunda-feira','terça-feira','quarta-feira','quinta-feira','sexta-feira','sábado'];
+
+function ymd(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function parse(s){ if(!s) return null; var p=s.split('-'); return new Date(+p[0],+p[1]-1,+p[2]); }
+function today(){ var d=new Date(); d.setHours(0,0,0,0); return d; }
+function addDays(d,n){ var x=new Date(d); x.setDate(x.getDate()+n); return x; }
+function addMonths(d,n){ var x=new Date(d.getFullYear(), d.getMonth()+n, 1); var last=new Date(x.getFullYear(),x.getMonth()+1,0).getDate(); x.setDate(Math.min(d.getDate(),last)); return x; }
+function daysBetween(a,b){ return Math.round((Date.UTC(b.getFullYear(),b.getMonth(),b.getDate())-Date.UTC(a.getFullYear(),a.getMonth(),a.getDate()))/86400000); }
+function fmtDate(s){ var d=typeof s==='string'?parse(s):s; if(!d) return '—'; return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear(); }
+function fmtLong(d){ return SEMANA[d.getDay()]+', '+d.getDate()+' de '+MESES[d.getMonth()]+' de '+d.getFullYear(); }
+function money(v){ return (Number(v)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+function relDays(n){ if(n===0) return 'hoje'; if(n===1) return 'amanhã'; if(n===-1) return 'ontem'; return n>0 ? 'em '+n+' dias' : 'há '+(-n)+' dias'; }
+function plural(n,s,p){ return n+' '+(n===1?s:p); }
+function toast(msg){ var t=document.createElement('div'); t.className='toast'; t.textContent=msg; document.body.appendChild(t); setTimeout(function(){t.remove();},2600); }
+
+/* ---------------- criptografia ---------------- */
+async function deriveKey(password, saltBytes, iter){
+  var base = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2', salt:saltBytes, iterations:iter, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['encrypt','decrypt']);
+}
+async function encryptObj(obj, k, s, iter){
+  var iv = crypto.getRandomValues(new Uint8Array(12));
+  var ct = await crypto.subtle.encrypt({name:'AES-GCM', iv:iv}, k, new TextEncoder().encode(JSON.stringify(obj)));
+  return {app:'cofre', v:1, kdf:'PBKDF2-SHA256', iter:iter, salt:b64(s), iv:b64(iv), ct:b64(ct)};
+}
+async function decryptBox(box, k){
+  var pt = await crypto.subtle.decrypt({name:'AES-GCM', iv:unb64(box.iv)}, k, unb64(box.ct));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+function readBox(){ var raw=lsGet(STORE); if(!raw) return null; try{ return JSON.parse(raw); }catch(e){ return null; } }
+
+function save(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveNow, 250);
+}
+async function saveNow(){
+  if(!key || !D) return;
+  var box = await encryptObj(D, key, salt, ITER);
+  if(!lsSet(STORE, JSON.stringify(box))) toast('Não consegui gravar neste aparelho (memória cheia ou bloqueada).');
+  writeHints();
+}
+
+function emptyData(name){
+  return {
+    nome: name || '',
+    criado: new Date().toISOString(),
+    eventos: [], ordens: [], contas: [], lembretes: [],
+    avisosVistos: {}, avisosNotificados: {},
+    cfg: { travarMin:5, travarAoSair:false, diasAviso:3, horaAviso:'09:00', notifSistema:false, notifDiscreta:true, dicasHorario:true, tema:'auto', ocultarValores:false }
+  };
+}
+
+/* ---------------- entrada / tentativas ---------------- */
+function tries(){ try{ return JSON.parse(lsGet(STORE_TRY)) || {n:0,until:0}; }catch(e){ return {n:0,until:0}; } }
+
+function showLock(){
+  var box = readBox();
+  var setup = !box;
+  $('#lockTitle').textContent = setup ? 'Criar seu cofre' : 'Cofre';
+  $('#lockSub').textContent = setup ? 'Escolha uma senha. Ela tranca e cifra tudo o que você guardar aqui.' : 'Digite sua senha para entrar.';
+  $('#setupFields').classList.toggle('hidden', !setup);
+  $('#setupFields2').classList.toggle('hidden', !setup);
+  $('#lockBtn').textContent = setup ? 'Criar e entrar' : 'Entrar';
+  $('#pw').setAttribute('autocomplete', setup ? 'new-password' : 'current-password');
+  $('#restoreLine').classList.toggle('hidden', !setup);
+  $('#lockErr').textContent = '';
+  $('#pw').value=''; $('#pw2').value='';
+  $('#lock').classList.remove('hidden');
+  $('#app').classList.add('hidden');
+  setTimeout(function(){ $('#pw').focus(); }, 50);
+}
+
+$('#lockForm').addEventListener('submit', async function(ev){
+  ev.preventDefault();
+  var err = $('#lockErr'); err.textContent='';
+  var pw = $('#pw').value;
+  var box = readBox();
+  var btn = $('#lockBtn');
+  if(!box){
+    if(pw.length < 10){ err.textContent='A senha precisa ter pelo menos 10 caracteres.'; return; }
+    if(pw !== $('#pw2').value){ err.textContent='As senhas não conferem.'; return; }
+    btn.disabled=true; btn.textContent='Criando...';
+    salt = crypto.getRandomValues(new Uint8Array(16));
+    key = await deriveKey(pw, salt, ITER);
+    D = emptyData($('#pwName').value.trim());
+    await saveNow();
+    btn.disabled=false;
+    enter();
+    return;
+  }
+  var t = tries();
+  if(Date.now() < t.until){ err.textContent='Muitas tentativas. Aguarde '+Math.ceil((t.until-Date.now())/1000)+' s.'; return; }
+  btn.disabled=true; btn.textContent='Abrindo...';
+  try{
+    var s = unb64(box.salt);
+    var k = await deriveKey(pw, s, box.iter || ITER);
+    var data = await decryptBox(box, k);
+    key = k; salt = s; D = migrate(data);
+    lsDel(STORE_TRY);
+    enter();
+  }catch(e){
+    t.n++;
+    if(t.n >= 3) t.until = Date.now() + Math.min(300, Math.pow(2, t.n-2)*5)*1000;
+    lsSet(STORE_TRY, JSON.stringify(t));
+    err.textContent = 'Senha incorreta.' + (t.n>=3 ? ' Aguarde '+Math.ceil((t.until-Date.now())/1000)+' s para tentar de novo.' : '');
+  }finally{
+    btn.disabled=false; btn.textContent='Entrar';
+    $('#pw').value='';
+  }
+});
+
+function migrate(d){
+  var base = emptyData(d.nome);
+  for(var k in base) if(!(k in d)) d[k]=base[k];
+  for(var c in base.cfg) if(!(c in d.cfg)) d.cfg[c]=base.cfg[c];
+  return d;
+}
+
+function enter(){
+  $('#lock').classList.add('hidden');
+  $('#app').classList.remove('hidden');
+  applyTheme();
+  lastAct = Date.now();
+  buildNav();
+  go(location.hash.slice(1) || 'painel');
+  tick();
+}
+
+function lockNow(){
+  saveNow();
+  key = null; D = null;
+  $('#view').innerHTML=''; $('#drawerPanel').innerHTML=''; $('#dlgForm').innerHTML='';
+  $('#drawer').classList.add('hidden');
+  if($('#dlg').open) $('#dlg').close();
+  history.replaceState(null,'',location.pathname);
+  showLock();
+}
+$('#lockNow').onclick = lockNow;
+
+['pointerdown','keydown','scroll','touchstart'].forEach(function(e){ addEventListener(e, function(){ lastAct=Date.now(); }, {passive:true}); });
+document.addEventListener('visibilitychange', function(){
+  if(document.hidden && D && D.cfg.travarAoSair) lockNow();
+});
+
+/* ---------------- restaurar backup na tela de entrada ---------------- */
+$('#restoreLink').onclick = function(e){ e.preventDefault(); pickFile(function(box){
+  if(!box || box.app!=='cofre' || !box.ct){ $('#lockErr').textContent='Arquivo de backup inválido.'; return; }
+  lsSet(STORE, JSON.stringify(box));
+  showLock();
+  $('#lockSub').textContent='Backup carregado. Digite a senha que você usava nele.';
+}); };
+function pickFile(cb){
+  var f = $('#fileIn'); f.value='';
+  f.onchange = function(){ var file=f.files[0]; if(!file) return; var r=new FileReader(); r.onload=function(){ try{ cb(JSON.parse(r.result)); }catch(e){ cb(null); } }; r.readAsText(file); };
+  f.click();
+}
+
+/* ---------------- navegação ---------------- */
+var ICONS = {
+  painel:'<path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/>',
+  registro:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5V21h16"/><path d="M9 7h7M9 11h5"/>',
+  investimentos:'<path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-6"/><path d="M15 8h5v5"/>',
+  contas:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>',
+  datas:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/>',
+  liturgia:'<path d="M12 2v20M5 8h14"/>',
+  ajustes:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'
+};
+var ROOMS = [
+  ['painel','Painel'],['registro','Registro'],['investimentos','Investimentos'],['contas','Contas'],
+  ['datas','Datas'],['liturgia','Liturgia'],['ajustes','Ajustes']
+];
+function svg(name){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+ICONS[name]+'</svg>'; }
+
+function buildNav(){
+  var brand = '<div class="brand"><svg viewBox="0 0 48 48"><rect x="6" y="20" width="36" height="24" rx="5" fill="none" stroke="currentColor" stroke-width="3"/><path d="M15 20v-6a9 9 0 0 1 18 0v6" fill="none" stroke="currentColor" stroke-width="3"/></svg>Cofre</div>';
+  var SHORT={investimentos:'Investir'};
+  var mk = function(short){ return ROOMS.map(function(r){ return '<button class="navbtn" data-room="'+r[0]+'">'+svg(r[0])+'<span class="lbl">'+(short&&SHORT[r[0]]||r[1])+'</span><span class="count hidden" data-count="'+r[0]+'"></span></button>'; }).join(''); };
+  var btns=mk(false);
+  $('#sideNav').innerHTML = brand + btns + '<div class="spacer"></div><div class="muted small" style="padding:0 12px">'+(D.nome?'Olá, '+esc(D.nome)+'.':'')+'<br>Dados cifrados neste aparelho.</div>';
+  $('#bottomNav').innerHTML = mk(true);
+  document.querySelectorAll('.navbtn').forEach(function(b){ b.onclick=function(){ go(b.dataset.room); }; });
+}
+function go(r){
+  if(!ROOMS.some(function(x){return x[0]===r;})) r='painel';
+  room = r;
+  history.replaceState(null,'','#'+r);
+  document.querySelectorAll('.navbtn').forEach(function(b){ b.classList.toggle('on', b.dataset.room===r); });
+  $('#pageTitle').textContent = ROOMS.find(function(x){return x[0]===r;})[1];
+  render();
+  window.scrollTo(0,0);
+}
+function render(){
+  if(!D) return;
+  var v = $('#view');
+  ({painel:vPainel, registro:vRegistro, investimentos:vInvest, contas:vContas, datas:vDatas, liturgia:vLiturgia, ajustes:vAjustes})[room](v);
+  updateBadges();
+}
+function applyTheme(){
+  var t = D && D.cfg.tema;
+  if(t==='light'||t==='dark') document.documentElement.setAttribute('data-theme',t);
+  else document.documentElement.removeAttribute('data-theme');
+}
+function val(v){ return D.cfg.ocultarValores ? 'R$ •••••' : money(v); }
+
+/* =====================================================================
+   SISTEMA DE AVISOS (integra todas as salas)
+   ===================================================================== */
+function atTime(dateStr, hhmm){ var d=parse(dateStr); var p=(hhmm||'09:00').split(':'); d.setHours(+p[0]||0, +p[1]||0, 0, 0); return d.getTime(); }
+
+/* Gera todos os avisos possíveis, com o instante em que cada um começa a valer. */
+function allAlerts(){
+  var out=[], cfg=D.cfg, H=cfg.horaAviso, now=Date.now(), t0=today();
+  D.contas.forEach(function(c){
+    if(c.pago) return;
+    var due=parse(c.venc), n=daysBetween(t0,due);
+    var base={sala:'contas', ref:c.id};
+    out.push(Object.assign({key:'c:'+c.id+':'+c.venc+':breve', when:atTime(ymd(addDays(due,-cfg.diasAviso)),H), lvl:'warn',
+      t:'Conta vence '+relDays(n)+': '+c.desc, m:val(c.valor)+' · vencimento '+fmtDate(c.venc), live:n>0}, base));
+    out.push(Object.assign({key:'c:'+c.id+':'+c.venc+':hoje', when:atTime(c.venc,H), lvl:'bad',
+      t:(n===0?'Conta vence hoje: ':'Conta em atraso: ')+c.desc, m:val(c.valor)+(n<0?' · venceu '+relDays(n):''), live:true}, base));
+  });
+  D.ordens.forEach(function(o){
+    if(o.status!=='pendente') return;
+    var w=atTime(o.data, o.hora||'10:00'), base={sala:'investimentos', ref:o.id};
+    var desc=o.tipo+' · '+o.ativo;
+    out.push(Object.assign({key:'o:'+o.id+':'+o.data+':vespera', when:w-86400000, lvl:'info',
+      t:'Ordem programada para amanhã: '+desc, m:val(o.valor)+' · '+fmtDate(o.data)+(o.hora?' às '+o.hora:''), live:w>now}, base));
+    out.push(Object.assign({key:'o:'+o.id+':'+o.data+':hora', when:w, lvl:'bad',
+      t:'Hora de executar a ordem: '+desc, m:val(o.valor)+' · '+fmtDate(o.data)+(o.hora?' às '+o.hora:'')+' · marque como executada', live:true}, base));
+  });
+  D.lembretes.forEach(function(l){
+    if(l.feito) return;
+    out.push({key:'l:'+l.id+':'+l.data, when:atTime(l.data,l.hora||H), lvl:'info', t:'Lembrete: '+l.titulo, m:fmtDate(l.data)+(l.nota?' · '+l.nota:''), sala:'datas', ref:l.id, live:true});
+  });
+  var y=t0.getFullYear();
+  D.eventos.forEach(function(e){
+    if(!e.anual) return;
+    var d=parse(e.data); if(!d) return;
+    var ann=new Date(y,d.getMonth(),d.getDate()); var anos=y-d.getFullYear(); if(anos<1) return;
+    var k=ymd(ann);
+    out.push({key:'e:'+e.id+':'+y, when:atTime(k,H), lvl:'ok', t:'Faz '+plural(anos,'ano','anos')+': '+e.titulo, m:'Registrado em '+fmtDate(e.data), sala:'registro', ref:e.id, live:daysBetween(ann,t0)<=2});
+  });
+  return out;
+}
+function activeAlerts(){
+  var now=Date.now();
+  var list = allAlerts().filter(function(a){ return a.when<=now && a.live && !D.avisosVistos[a.key]; });
+  // um aviso por item: mostra só o mais recente/importante
+  var by={}; list.forEach(function(a){ var k=a.sala+a.ref; if(!by[k] || a.when>by[k].when) by[k]=a; });
+  return Object.values(by).sort(function(a,b){ return a.when-b.when; });
+}
+function updateBadges(){
+  if(!D) return;
+  var act=activeAlerts();
+  var dot=$('#bellDot'); dot.textContent=act.length; dot.classList.toggle('hidden', !act.length);
+  var per={}; act.forEach(function(a){ per[a.sala]=(per[a.sala]||0)+1; });
+  document.querySelectorAll('[data-count]').forEach(function(el){ var n=per[el.dataset.count]||0; el.textContent=n; el.classList.toggle('hidden', !n); });
+  document.title = act.length ? '('+act.length+') Cofre' : 'Cofre';
+}
+function alertHTML(a, withActs){
+  return '<div class="alert '+a.lvl+'"><span class="bar"></span><div class="main"><div class="t">'+esc(a.t)+'</div><div class="m">'+esc(a.m)+'</div>'+
+    (withActs?'<div class="btns" style="margin-top:6px"><button class="btn sm" data-goto="'+a.sala+'">Abrir</button><button class="btn sm ghost" data-dismiss="'+esc(a.key)+'">Dispensar</button></div>':'')+
+    '</div></div>';
+}
+function bindAlertActs(root){
+  root.querySelectorAll('[data-goto]').forEach(function(b){ b.onclick=function(){ $('#drawer').classList.add('hidden'); go(b.dataset.goto); }; });
+  root.querySelectorAll('[data-dismiss]').forEach(function(b){ b.onclick=function(){ D.avisosVistos[b.dataset.dismiss]=Date.now(); save(); openDrawer(); render(); }; });
+}
+function openDrawer(){
+  var act=activeAlerts();
+  var now=Date.now();
+  var prox=allAlerts().filter(function(a){ return a.when>now && a.when<now+14*86400000; }).sort(function(a,b){return a.when-b.when;}).slice(0,8);
+  var p=$('#drawerPanel');
+  p.innerHTML='<div class="sect" style="margin-top:0"><h2>Avisos</h2><button class="btn sm" id="closeDrawer">Fechar</button></div>'+
+    (act.length? act.map(function(a){return alertHTML(a,true);}).join('') : '<div class="empty">Nada pendente agora.</div>')+
+    (act.length>1?'<button class="btn sm" id="dismissAll">Dispensar todos</button>':'')+
+    '<div class="sect"><h2>Próximos 14 dias</h2></div>'+
+    (prox.length? prox.map(function(a){ var d=new Date(a.when); return '<div class="alert"><span class="bar" style="background:var(--line)"></span><div class="main"><div class="t">'+esc(a.t.replace(/^(Conta vence|Ordem programada para) [^:]+:/,'$1:'))+'</div><div class="m">aparece em '+fmtDate(d)+' às '+pad(d.getHours())+':'+pad(d.getMinutes())+'</div></div></div>'; }).join('') : '<p class="muted small">Nenhum aviso agendado.</p>')+
+    (!D.cfg.notifSistema?'<p class="muted small">Para receber os avisos como notificação do sistema, ligue em <a href="#" id="toCfg">Ajustes</a>.</p>':'');
+  $('#drawer').classList.remove('hidden');
+  $('#closeDrawer').onclick=function(){ $('#drawer').classList.add('hidden'); };
+  var da=$('#dismissAll'); if(da) da.onclick=function(){ act.forEach(function(a){ D.avisosVistos[a.key]=Date.now(); }); save(); openDrawer(); render(); };
+  var tc=$('#toCfg'); if(tc) tc.onclick=function(e){ e.preventDefault(); $('#drawer').classList.add('hidden'); go('ajustes'); };
+  bindAlertActs(p);
+}
+$('#bellBtn').onclick=openDrawer;
+$('#drawer').addEventListener('click', function(e){ if(e.target.id==='drawer') $('#drawer').classList.add('hidden'); });
+
+async function sysNotify(title, body, tag){
+  if(!('Notification' in window) || Notification.permission!=='granted') return;
+  var opt={body:body, tag:tag, icon:'icon.svg', badge:'icon.svg', renotify:false};
+  try{
+    var reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration();
+    if(reg){ await reg.showNotification(title, opt); return; }
+  }catch(e){}
+  try{ new Notification(title, opt); }catch(e){}
+}
+
+/* Grava só os horários futuros dos avisos (sem nenhum texto), para que o
+   app consiga avisar "você tem um aviso" mesmo com o cofre trancado. */
+function writeHints(){
+  if(!D) return;
+  if(!D.cfg.dicasHorario || !D.cfg.notifSistema){ lsDel(STORE_HINT); return; }
+  var now=Date.now();
+  var ts=allAlerts().filter(function(a){ return a.when>now && a.when<now+60*86400000 && !D.avisosNotificados[a.key]; }).map(function(a){ return a.when; });
+  ts=Array.from(new Set(ts)).sort().slice(0,200);
+  lsSet(STORE_HINT, JSON.stringify(ts));
+}
+
+function tick(){
+  var now=Date.now();
+  if(D){
+    var mins = Number(D.cfg.travarMin)||0;
+    if(mins>0 && now-lastAct > mins*60000){ lockNow(); return; }
+    var act=activeAlerts(), novos=act.filter(function(a){ return !D.avisosNotificados[a.key]; });
+    if(novos.length){
+      novos.forEach(function(a){ D.avisosNotificados[a.key]=now; });
+      if(D.cfg.notifSistema){
+        if(D.cfg.notifDiscreta) sysNotify('Cofre', novos.length===1?'Você tem um novo aviso.':'Você tem '+novos.length+' novos avisos.', 'cofre');
+        else novos.forEach(function(a){ sysNotify(a.t, a.m, a.key); });
+      }
+      save();
+    }
+    // limpeza de marcações antigas (> 120 dias)
+    ['avisosVistos','avisosNotificados'].forEach(function(f){ for(var k in D[f]) if(now-D[f][k] > 120*86400000) delete D[f][k]; });
+    updateBadges();
+    if(room==='painel' && !$('#dlg').open && document.activeElement.tagName!=='INPUT') { /* mantém painel atualizado */ }
+  }else{
+    try{
+      var hints=JSON.parse(lsGet(STORE_HINT)||'[]');
+      var due=hints.filter(function(t){ return t<=now; });
+      if(due.length){
+        sysNotify('Cofre', 'Você tem um aviso. Abra o cofre para ver.', 'cofre');
+        lsSet(STORE_HINT, JSON.stringify(hints.filter(function(t){ return t>now; })));
+      }
+    }catch(e){}
+  }
+}
+setInterval(tick, 30000);
+
+/* =====================================================================
+   DIÁLOGO GENÉRICO DE FORMULÁRIO
+   ===================================================================== */
+function formDialog(title, fieldsHTML, onSave, onDelete){
+  var f=$('#dlgForm');
+  f.innerHTML='<div class="dhead"><h2>'+esc(title)+'</h2><button class="btn sm ghost" value="cancel" formnovalidate aria-label="Fechar">✕</button></div>'+fieldsHTML+
+    '<div class="btns" style="justify-content:flex-end">'+(onDelete?'<button class="btn danger" type="button" id="dlgDel" style="margin-right:auto">Excluir</button>':'')+
+    '<button class="btn" value="cancel" formnovalidate>Cancelar</button><button class="btn primary" value="ok">Salvar</button></div>';
+  var dlg=$('#dlg');
+  f.onsubmit=function(e){
+    if(e.submitter && e.submitter.value==='cancel') return;
+    e.preventDefault();
+    var data={}; f.querySelectorAll('[name]').forEach(function(el){ data[el.name]= el.type==='checkbox'? el.checked : el.value.trim(); });
+    if(onSave(data)!==false){ dlg.close(); save(); render(); }
+  };
+  if(onDelete) $('#dlgDel').onclick=function(){ if(confirm('Excluir definitivamente?')){ onDelete(); dlg.close(); save(); render(); } };
+  dlg.showModal();
+  var first=f.querySelector('input:not([type=checkbox]),select,textarea'); if(first) first.focus();
+}
+function fld(label,name,value,type,extra){
+  type=type||'text';
+  if(type==='textarea') return '<div><label>'+label+'</label><textarea name="'+name+'" '+(extra||'')+'>'+esc(value)+'</textarea></div>';
+  if(type==='checkbox') return '<label class="check"><input type="checkbox" name="'+name+'" '+(value?'checked':'')+'> '+label+'</label>';
+  return '<div><label>'+label+'</label><input type="'+type+'" name="'+name+'" value="'+esc(value)+'" '+(extra||'')+'></div>';
+}
+function sel(label,name,value,opts){
+  return '<div><label>'+label+'</label><select name="'+name+'">'+opts.map(function(o){ var v=Array.isArray(o)?o[0]:o, t=Array.isArray(o)?o[1]:o; return '<option value="'+esc(v)+'"'+(String(v)===String(value)?' selected':'')+'>'+esc(t)+'</option>'; }).join('')+'</select></div>';
+}
+function numIn(s){ if(s==null||s==='') return 0; s=String(s).replace(/[^\d,.-]/g,''); if(s.indexOf(',')>=0) s=s.replace(/\./g,'').replace(',','.'); return Number(s)||0; }
+
+/* =====================================================================
+   SALA: PAINEL
+   ===================================================================== */
+function vPainel(v){
+  var t0=today(), act=activeAlerts();
+  var abertas=D.contas.filter(function(c){return !c.pago;});
+  var mesFim=new Date(t0.getFullYear(),t0.getMonth()+1,0);
+  var noMes=abertas.filter(function(c){ return parse(c.venc)<=mesFim; });
+  var atras=abertas.filter(function(c){ return parse(c.venc)<t0; });
+  var pend=D.ordens.filter(function(o){return o.status==='pendente';}).sort(function(a,b){return (a.data+(a.hora||'')).localeCompare(b.data+(b.hora||''));});
+  var lit=litInfo(t0);
+  var prox=abertas.slice().sort(function(a,b){return a.venc.localeCompare(b.venc);}).slice(0,5);
+  var hoje=D.eventos.filter(function(e){ var d=parse(e.data); return d && d.getMonth()===t0.getMonth() && d.getDate()===t0.getDate() && d.getFullYear()<t0.getFullYear(); });
+
+  v.innerHTML=
+    '<p class="muted" style="margin:-8px 0 16px">'+(D.nome?'Olá, '+esc(D.nome)+' · ':'')+fmtLong(t0)+'</p>'+
+    '<div class="grid g4">'+
+      stat('A pagar este mês', val(sum(noMes)), plural(noMes.length,'conta','contas'))+
+      stat('Em atraso', val(sum(atras)), plural(atras.length,'conta','contas'), atras.length?'var(--bad)':'')+
+      stat('Ordens pendentes', String(pend.length), pend[0]?'próxima '+fmtDate(pend[0].data):'nenhuma')+
+      stat('Registros', String(D.eventos.length), D.eventos.length?'último '+fmtDate(latest(D.eventos)):'nenhum')+
+    '</div>'+
+    '<div class="card" style="margin-top:14px;cursor:pointer" id="litCard"><div class="small muted">Liturgia de hoje</div><div style="font:600 17px var(--serif);margin-top:2px"><span class="color-dot" style="background:'+lit.hex+'"></span>'+esc(lit.titulo)+'</div><div class="small muted">'+esc(lit.tempo)+' · cor '+esc(lit.cor.toLowerCase())+' · '+esc(lit.ciclo)+'</div></div>'+
+    '<div class="sect"><h2>Avisos agora</h2>'+(act.length?'<button class="btn sm" id="seeAll">Ver todos</button>':'')+'</div>'+
+    '<div class="list" id="dashAlerts">'+(act.length?act.slice(0,5).map(function(a){return alertHTML(a,true);}).join(''):'<div class="empty">Tudo em dia. Nenhum aviso pendente.</div>')+'</div>'+
+    (hoje.length?'<div class="sect"><h2>Neste dia, em outros anos</h2></div><div class="list">'+hoje.map(evItem).join('')+'</div>':'')+
+    '<div class="grid g2" style="margin-top:8px">'+
+      '<div><div class="sect"><h2>Próximas contas</h2><button class="btn sm" data-goto="contas">Abrir</button></div><div class="list">'+(prox.length?prox.map(contaItem).join(''):'<div class="empty">Nenhuma conta em aberto.</div>')+'</div></div>'+
+      '<div><div class="sect"><h2>Próximas ordens</h2><button class="btn sm" data-goto="investimentos">Abrir</button></div><div class="list">'+(pend.length?pend.slice(0,5).map(ordemItem).join(''):'<div class="empty">Nenhuma ordem programada.</div>')+'</div></div>'+
+    '</div>';
+  bindAlertActs(v);
+  bindItemActs(v);
+  $('#litCard').onclick=function(){ go('liturgia'); };
+  var sa=$('#seeAll'); if(sa) sa.onclick=openDrawer;
+}
+function stat(k,vv,s,color){ return '<div class="card stat"><div class="k">'+k+'</div><div class="v num"'+(color?' style="color:'+color+'"':'')+'>'+vv+'</div><div class="s">'+s+'</div></div>'; }
+function sum(list){ return list.reduce(function(a,c){ return a+(Number(c.valor)||0); },0); }
+function latest(list){ return list.reduce(function(a,e){ return e.data>a?e.data:a; },''); }
+
+/* =====================================================================
+   SALA: REGISTRO DE EVENTOS PASSADOS
+   ===================================================================== */
+var regQ='', regCat='';
+function vRegistro(v){
+  var cats=Array.from(new Set(D.eventos.map(function(e){return e.cat;}).filter(Boolean))).sort();
+  var list=D.eventos.filter(function(e){
+    if(regCat && e.cat!==regCat) return false;
+    if(!regQ) return true;
+    return (e.titulo+' '+(e.nota||'')+' '+(e.cat||'')+' '+(e.local||'')).toLowerCase().indexOf(regQ.toLowerCase())>=0;
+  }).sort(function(a,b){ return b.data.localeCompare(a.data); });
+  var html='<div class="toolbar"><input type="search" id="regQ" placeholder="Buscar nos registros" value="'+esc(regQ)+'">'+
+    '<select id="regCat"><option value="">Todas as categorias</option>'+cats.map(function(c){return '<option'+(c===regCat?' selected':'')+'>'+esc(c)+'</option>';}).join('')+'</select>'+
+    '<button class="btn primary" id="addEv">+ Novo registro</button></div>';
+  if(!list.length) html+='<div class="empty">'+(D.eventos.length?'Nada encontrado.':'Registre aqui os acontecimentos que você quer guardar: datas importantes, decisões, conversas, viagens, compras.')+'</div>';
+  else {
+    var ano=null; html+='<div class="list">';
+    list.forEach(function(e){ var y=e.data.slice(0,4); if(y!==ano){ ano=y; html+='<h3 class="muted" style="margin:10px 2px 0">'+y+'</h3>'; } html+=evItem(e); });
+    html+='</div>';
+  }
+  v.innerHTML=html;
+  $('#regQ').oninput=function(){ regQ=this.value; var p=this.selectionStart; vRegistro(v); var q=$('#regQ'); q.focus(); q.setSelectionRange(p,p); };
+  $('#regCat').onchange=function(){ regCat=this.value; vRegistro(v); };
+  $('#addEv').onclick=function(){ editEvento(); };
+  bindItemActs(v);
+}
+function evItem(e){
+  var d=parse(e.data);
+  return '<div class="item"><div class="datebox"><b>'+d.getDate()+'</b><span>'+MES3[d.getMonth()]+'</span></div><div class="main"><div class="t">'+esc(e.titulo)+'</div>'+
+    '<div class="m">'+fmtDate(e.data)+(e.hora?' · '+esc(e.hora):'')+' · '+relDays(daysBetween(today(),d))+(e.local?' · '+esc(e.local):'')+'</div>'+
+    (e.cat||e.anual?'<div style="margin-top:4px">'+(e.cat?'<span class="tag">'+esc(e.cat)+'</span>':'')+(e.anual?'<span class="tag ok">lembrar todo ano</span>':'')+'</div>':'')+
+    (e.nota?'<div class="m" style="margin-top:6px;white-space:pre-wrap;color:var(--text)">'+esc(e.nota)+'</div>':'')+
+    '</div><div class="side-r"><button class="btn sm" data-edit-ev="'+e.id+'">Editar</button></div></div>';
+}
+function editEvento(id){
+  var e=D.eventos.find(function(x){return x.id===id;}) || {data:ymd(today()), titulo:'', cat:'', nota:'', hora:'', local:'', anual:false};
+  var cats=Array.from(new Set(D.eventos.map(function(x){return x.cat;}).filter(Boolean)));
+  formDialog(id?'Editar registro':'Novo registro',
+    fld('O que aconteceu','titulo',e.titulo,'text','required maxlength="160"')+
+    '<div class="row">'+fld('Data','data',e.data,'date','required')+fld('Hora (opcional)','hora',e.hora,'time')+'</div>'+
+    '<div class="row">'+fld('Categoria','cat',e.cat,'text','list="catList" maxlength="40"')+fld('Local','local',e.local,'text','maxlength="80"')+'</div>'+
+    '<datalist id="catList">'+['Família','Saúde','Trabalho','Finanças','Fé','Viagem','Documentos'].concat(cats).filter(function(c,i,a){return a.indexOf(c)===i;}).map(function(c){return '<option value="'+esc(c)+'">';}).join('')+'</datalist>'+
+    fld('Detalhes','nota',e.nota,'textarea')+
+    fld('Avisar todo ano nesta data (aniversário do acontecimento)','anual',e.anual,'checkbox'),
+    function(d){ if(!d.titulo||!d.data) return false; Object.assign(e,d); if(!id){ e.id=uid(); D.eventos.push(e); } toast('Registro salvo.'); },
+    id?function(){ D.eventos=D.eventos.filter(function(x){return x.id!==id;}); }:null);
+}
+
+/* =====================================================================
+   SALA: PROGRAMAÇÃO DE ORDENS DE INVESTIMENTO
+   ===================================================================== */
+var invFilter='pendente';
+var TIPOS=['Compra','Venda','Aporte','Resgate','Transferência'];
+function vInvest(v){
+  var t0=today();
+  var all=D.ordens.slice().sort(function(a,b){ return (a.data+(a.hora||'')).localeCompare(b.data+(b.hora||'')); });
+  var list=all.filter(function(o){ return invFilter==='todas' || o.status===invFilter; });
+  if(invFilter!=='pendente') list.reverse();
+  var pend=all.filter(function(o){return o.status==='pendente';});
+  var exec=all.filter(function(o){return o.status==='executada';});
+  var entra=pend.filter(function(o){return o.tipo==='Compra'||o.tipo==='Aporte';});
+  var sai=pend.filter(function(o){return o.tipo==='Venda'||o.tipo==='Resgate';});
+  var atras=pend.filter(function(o){return parse(o.data)<t0;});
+  v.innerHTML='<div class="grid g4">'+
+      stat('Pendentes', String(pend.length), atras.length?plural(atras.length,'atrasada','atrasadas'):'em dia', atras.length?'var(--bad)':'')+
+      stat('Compras/aportes', val(sum(entra)), plural(entra.length,'ordem','ordens'))+
+      stat('Vendas/resgates', val(sum(sai)), plural(sai.length,'ordem','ordens'))+
+      stat('Executadas', String(exec.length), exec.length?'total '+val(sum(exec)):'—')+
+    '</div>'+
+    '<div class="toolbar" style="margin-top:16px"><div class="chips">'+[['pendente','Pendentes'],['executada','Executadas'],['cancelada','Canceladas'],['todas','Todas']].map(function(c){ return '<button class="chip'+(invFilter===c[0]?' on':'')+'" data-f="'+c[0]+'">'+c[1]+'</button>'; }).join('')+'</div>'+
+    '<span style="flex:1"></span><button class="btn" id="icsInv">Exportar p/ calendário</button><button class="btn primary" id="addOr">+ Programar ordem</button></div>'+
+    '<div class="list">'+(list.length?list.map(ordemItem).join(''):'<div class="empty">'+(invFilter==='pendente'?'Nenhuma ordem programada. Programe compras, vendas, aportes ou resgates com data e hora para receber o aviso na hora certa.':'Nada aqui.')+'</div>')+'</div>'+
+    '<p class="muted small" style="margin-top:14px">O Cofre não se conecta a corretoras: ele organiza e avisa. A execução é feita por você, na sua plataforma.</p>';
+  v.querySelectorAll('[data-f]').forEach(function(b){ b.onclick=function(){ invFilter=b.dataset.f; vInvest(v); }; });
+  $('#addOr').onclick=function(){ editOrdem(); };
+  $('#icsInv').onclick=function(){ exportICS('ordens'); };
+  bindItemActs(v);
+}
+function ordemItem(o){
+  var d=parse(o.data), n=daysBetween(today(),d);
+  var st=o.status==='executada'?'<span class="tag ok">executada</span>':o.status==='cancelada'?'<span class="tag">cancelada</span>':(n<0?'<span class="tag bad">atrasada</span>':n<=1?'<span class="tag warn">'+relDays(n)+'</span>':'<span class="tag info">'+relDays(n)+'</span>');
+  var q=o.qtd?' · '+esc(o.qtd)+(o.preco?' × '+money(o.preco):''):'';
+  return '<div class="item'+(o.status!=='pendente'?' done':'')+'"><div class="datebox"><b>'+d.getDate()+'</b><span>'+MES3[d.getMonth()]+'</span></div><div class="main">'+
+    '<div class="t">'+esc(o.tipo)+' · '+esc(o.ativo)+'</div><div class="m">'+fmtDate(o.data)+(o.hora?' às '+esc(o.hora):'')+(o.corretora?' · '+esc(o.corretora):'')+q+(o.recorr&&o.recorr!=='nao'?' · repete '+recLabel(o.recorr):'')+'</div>'+
+    '<div style="margin-top:4px">'+st+'</div>'+(o.nota?'<div class="m" style="margin-top:6px;white-space:pre-wrap">'+esc(o.nota)+'</div>':'')+'</div>'+
+    '<div class="side-r"><div class="num" style="font-weight:650">'+val(o.valor)+'</div><div class="acts">'+
+      (o.status==='pendente'?'<button class="btn sm" data-exec="'+o.id+'">Executada</button>':'')+
+      '<button class="btn sm ghost" data-edit-or="'+o.id+'">Editar</button></div></div></div>';
+}
+function recLabel(r){ return {semanal:'toda semana',mensal:'todo mês',trimestral:'a cada 3 meses',anual:'todo ano'}[r]||''; }
+function nextDate(dateStr, r){ var d=parse(dateStr); if(r==='semanal') d=addDays(d,7); else if(r==='mensal') d=addMonths(d,1); else if(r==='trimestral') d=addMonths(d,3); else if(r==='anual') d=addMonths(d,12); else return null; return ymd(d); }
+function editOrdem(id){
+  var o=D.ordens.find(function(x){return x.id===id;}) || {tipo:'Compra', ativo:'', data:ymd(addDays(today(),1)), hora:'10:00', valor:'', qtd:'', preco:'', corretora:'', status:'pendente', recorr:'nao', nota:''};
+  formDialog(id?'Editar ordem':'Programar ordem',
+    '<div class="row">'+sel('Tipo','tipo',o.tipo,TIPOS)+fld('Ativo / produto','ativo',o.ativo,'text','required maxlength="80" placeholder="ex.: Tesouro IPCA 2035, PETR4, CDB"')+'</div>'+
+    '<div class="row">'+fld('Data','data',o.data,'date','required')+fld('Hora do aviso','hora',o.hora,'time')+'</div>'+
+    '<div class="row3">'+fld('Valor total (R$)','valor',o.valor===''?'':String(o.valor).replace('.',','),'text','inputmode="decimal"')+fld('Quantidade','qtd',o.qtd,'text','inputmode="decimal"')+fld('Preço alvo (R$)','preco',o.preco===''?'':String(o.preco).replace('.',','),'text','inputmode="decimal"')+'</div>'+
+    '<div class="row">'+fld('Corretora / banco','corretora',o.corretora,'text','maxlength="60"')+sel('Repetir','recorr',o.recorr,[['nao','Não repete'],['semanal','Toda semana'],['mensal','Todo mês'],['trimestral','A cada 3 meses'],['anual','Todo ano']])+'</div>'+
+    sel('Situação','status',o.status,[['pendente','Pendente'],['executada','Executada'],['cancelada','Cancelada']])+
+    fld('Observações','nota',o.nota,'textarea'),
+    function(d){ if(!d.ativo||!d.data) return false; d.valor=numIn(d.valor); d.preco=d.preco?numIn(d.preco):''; Object.assign(o,d); if(!id){ o.id=uid(); D.ordens.push(o); } toast('Ordem salva.'); },
+    id?function(){ D.ordens=D.ordens.filter(function(x){return x.id!==id;}); }:null);
+}
+function execOrdem(id){
+  var o=D.ordens.find(function(x){return x.id===id;}); if(!o) return;
+  o.status='executada'; o.executadaEm=new Date().toISOString();
+  var nd=nextDate(o.data,o.recorr);
+  if(nd){ var n=Object.assign({},o,{id:uid(),data:nd,status:'pendente'}); delete n.executadaEm; D.ordens.push(n); toast('Executada. Próxima: '+fmtDate(nd)+'.'); }
+  else toast('Ordem marcada como executada.');
+  save(); render();
+}
+
+/* =====================================================================
+   SALA: CONTAS A PAGAR
+   ===================================================================== */
+var ctFilter='abertas';
+function vContas(v){
+  var t0=today();
+  var abertas=D.contas.filter(function(c){return !c.pago;});
+  var atras=abertas.filter(function(c){return parse(c.venc)<t0;});
+  var sem=abertas.filter(function(c){ var n=daysBetween(t0,parse(c.venc)); return n>=0&&n<=7; });
+  var mesFim=new Date(t0.getFullYear(),t0.getMonth()+1,0);
+  var mes=abertas.filter(function(c){return parse(c.venc)<=mesFim;});
+  var proxMesFim=new Date(t0.getFullYear(),t0.getMonth()+2,0);
+  var proxMes=abertas.filter(function(c){var d=parse(c.venc); return d>mesFim&&d<=proxMesFim;});
+  var list=(ctFilter==='abertas'?abertas:ctFilter==='pagas'?D.contas.filter(function(c){return c.pago;}):D.contas).slice()
+    .sort(function(a,b){ return ctFilter==='pagas'? (b.pagoEm||'').localeCompare(a.pagoEm||'') : a.venc.localeCompare(b.venc); });
+  v.innerHTML='<div class="grid g4">'+
+    stat('Em atraso', val(sum(atras)), plural(atras.length,'conta','contas'), atras.length?'var(--bad)':'')+
+    stat('Próximos 7 dias', val(sum(sem)), plural(sem.length,'conta','contas'), sem.length?'var(--warn)':'')+
+    stat('Até o fim do mês', val(sum(mes)), MESES[t0.getMonth()])+
+    stat('Mês que vem', val(sum(proxMes)), MESES[(t0.getMonth()+1)%12])+
+  '</div>'+
+  '<div class="toolbar" style="margin-top:16px"><div class="chips">'+[['abertas','Em aberto'],['pagas','Pagas'],['todas','Todas']].map(function(c){ return '<button class="chip'+(ctFilter===c[0]?' on':'')+'" data-f="'+c[0]+'">'+c[1]+'</button>'; }).join('')+'</div>'+
+  '<span style="flex:1"></span><button class="btn" id="icsCt">Exportar p/ calendário</button><button class="btn primary" id="addCt">+ Nova conta</button></div>'+
+  '<div class="list">'+(list.length?list.map(contaItem).join(''):'<div class="empty">'+(ctFilter==='abertas'?'Nenhuma conta em aberto. Cadastre as contas futuras — o Cofre avisa '+D.cfg.diasAviso+' dias antes e no dia do vencimento.':'Nada aqui.')+'</div>')+'</div>';
+  v.querySelectorAll('[data-f]').forEach(function(b){ b.onclick=function(){ ctFilter=b.dataset.f; vContas(v); }; });
+  $('#addCt').onclick=function(){ editConta(); };
+  $('#icsCt').onclick=function(){ exportICS('contas'); };
+  bindItemActs(v);
+}
+function contaItem(c){
+  var d=parse(c.venc), n=daysBetween(today(),d);
+  var st=c.pago?'<span class="tag ok">paga em '+fmtDate(c.pagoEm)+'</span>':n<0?'<span class="tag bad">atrasada · '+relDays(n)+'</span>':n<=D.cfg.diasAviso?'<span class="tag warn">vence '+relDays(n)+'</span>':'<span class="tag info">vence '+relDays(n)+'</span>';
+  return '<div class="item'+(c.pago?' done':'')+'"><div class="datebox"><b>'+d.getDate()+'</b><span>'+MES3[d.getMonth()]+'</span></div><div class="main">'+
+    '<div class="t">'+esc(c.desc)+'</div><div class="m">'+fmtDate(c.venc)+(c.cat?' · '+esc(c.cat):'')+(c.recorr&&c.recorr!=='nao'?' · repete '+recLabel(c.recorr):'')+(c.parcelas?' · parcela '+esc(c.parcela||1)+'/'+esc(c.parcelas):'')+'</div>'+
+    '<div style="margin-top:4px">'+st+'</div>'+(c.nota?'<div class="m" style="margin-top:6px;white-space:pre-wrap">'+esc(c.nota)+'</div>':'')+'</div>'+
+    '<div class="side-r"><div class="num" style="font-weight:650">'+val(c.valor)+'</div><div class="acts">'+
+    (!c.pago?'<button class="btn sm" data-pay="'+c.id+'">Paguei</button>':'<button class="btn sm ghost" data-unpay="'+c.id+'">Desfazer</button>')+
+    '<button class="btn sm ghost" data-edit-ct="'+c.id+'">Editar</button></div></div></div>';
+}
+function editConta(id){
+  var c=D.contas.find(function(x){return x.id===id;}) || {desc:'', valor:'', venc:ymd(addDays(today(),7)), cat:'', recorr:'nao', parcelas:'', parcela:'', nota:'', pago:false};
+  formDialog(id?'Editar conta':'Nova conta a pagar',
+    fld('Descrição','desc',c.desc,'text','required maxlength="120" placeholder="ex.: Aluguel, IPTU, cartão"')+
+    '<div class="row">'+fld('Valor (R$)','valor',c.valor===''?'':String(c.valor).replace('.',','),'text','inputmode="decimal"')+fld('Vencimento','venc',c.venc,'date','required')+'</div>'+
+    '<div class="row">'+fld('Categoria','cat',c.cat,'text','list="ctCats" maxlength="40"')+sel('Repetir','recorr',c.recorr,[['nao','Não repete'],['semanal','Toda semana'],['mensal','Todo mês'],['trimestral','A cada 3 meses'],['anual','Todo ano']])+'</div>'+
+    '<datalist id="ctCats">'+['Moradia','Cartão','Impostos','Saúde','Educação','Seguros','Serviços','Outros'].map(function(x){return '<option value="'+x+'">';}).join('')+'</datalist>'+
+    (!id?'<div class="row">'+fld('Parcelado em (nº de parcelas)','parcelas','','number','min="2" max="120" placeholder="deixe vazio se não for"')+'<div></div></div>':'')+
+    fld('Observações (código de barras, chave Pix...)','nota',c.nota,'textarea'),
+    function(d){
+      if(!d.desc||!d.venc) return false; d.valor=numIn(d.valor);
+      if(!id && Number(d.parcelas)>=2){
+        var n=Math.min(120,Number(d.parcelas)), g=uid();
+        for(var i=0;i<n;i++) D.contas.push({id:uid(), grupo:g, desc:d.desc, valor:d.valor, venc:ymd(addMonths(parse(d.venc),i)), cat:d.cat, recorr:'nao', parcelas:n, parcela:i+1, nota:d.nota, pago:false});
+        toast(n+' parcelas criadas.'); return;
+      }
+      delete d.parcelas; Object.assign(c,d); if(!id){ c.id=uid(); D.contas.push(c); } toast('Conta salva.');
+    },
+    id?function(){ D.contas=D.contas.filter(function(x){return x.id!==id;}); }:null);
+}
+function payConta(id){
+  var c=D.contas.find(function(x){return x.id===id;}); if(!c) return;
+  c.pago=true; c.pagoEm=ymd(today());
+  var nd=nextDate(c.venc,c.recorr);
+  if(nd && !c.gerouProxima){ c.gerouProxima=true; D.contas.push({id:uid(), desc:c.desc, valor:c.valor, venc:nd, cat:c.cat, recorr:c.recorr, nota:c.nota, pago:false}); toast('Paga. Próxima criada para '+fmtDate(nd)+'.'); }
+  else toast('Conta marcada como paga.');
+  save(); render();
+}
+
+/* ---------------- ações das listas ---------------- */
+function bindItemActs(root){
+  root.querySelectorAll('[data-edit-ev]').forEach(function(b){ b.onclick=function(){ editEvento(b.dataset.editEv); }; });
+  root.querySelectorAll('[data-edit-or]').forEach(function(b){ b.onclick=function(){ editOrdem(b.dataset.editOr); }; });
+  root.querySelectorAll('[data-exec]').forEach(function(b){ b.onclick=function(){ execOrdem(b.dataset.exec); }; });
+  root.querySelectorAll('[data-edit-ct]').forEach(function(b){ b.onclick=function(){ editConta(b.dataset.editCt); }; });
+  root.querySelectorAll('[data-pay]').forEach(function(b){ b.onclick=function(){ payConta(b.dataset.pay); }; });
+  root.querySelectorAll('[data-unpay]').forEach(function(b){ b.onclick=function(){ var c=D.contas.find(function(x){return x.id===b.dataset.unpay;}); if(c){ c.pago=false; delete c.pagoEm; save(); render(); } }; });
+  root.querySelectorAll('[data-edit-lb]').forEach(function(b){ b.onclick=function(){ editLembrete(b.dataset.editLb); }; });
+  root.querySelectorAll('[data-done-lb]').forEach(function(b){ b.onclick=function(){ var l=D.lembretes.find(function(x){return x.id===b.dataset.doneLb;}); if(l){ l.feito=!l.feito; save(); render(); } }; });
+  root.querySelectorAll('[data-goto]').forEach(function(b){ if(!b.onclick) b.onclick=function(){ go(b.dataset.goto); }; });
+}
+
+/* =====================================================================
+   SALA: CALCULADORA DE DATAS (+ lembretes)
+   ===================================================================== */
+var calcTab='entre';
+var FERIADOS_FIXOS=['01-01','04-21','05-01','09-07','10-12','11-02','11-15','11-20','12-25'];
+function feriadosBR(y){
+  var e=easter(y), set={};
+  FERIADOS_FIXOS.forEach(function(md){ set[y+'-'+md]=1; });
+  [addDays(e,-48),addDays(e,-47),addDays(e,-2),addDays(e,60)].forEach(function(d){ set[ymd(d)]=1; }); // carnaval (seg/ter), sexta santa, Corpus Christi
+  return set;
+}
+function isBiz(d, hol){ var w=d.getDay(); if(w===0||w===6) return false; if(hol){ var y=d.getFullYear(); hol[y]=hol[y]||feriadosBR(y); if(hol[y][ymd(d)]) return false; } return true; }
+function bizBetween(a,b,useHol){ var hol=useHol?{}:null, n=0, s=a<b?1:-1, d=new Date(a); while(daysBetween(d,b)!==0){ d=addDays(d,s); if(isBiz(d,hol)) n+=s; } return n; }
+function addBiz(a,n,useHol){ var hol=useHol?{}:null, d=new Date(a), s=n<0?-1:1, k=Math.abs(n); while(k>0){ d=addDays(d,s); if(isBiz(d,hol)) k--; } return d; }
+function ymdDiff(a,b){
+  var sign=1; if(b<a){ var t=a; a=b; b=t; sign=-1; }
+  var y=b.getFullYear()-a.getFullYear(), m=b.getMonth()-a.getMonth(), d=b.getDate()-a.getDate();
+  if(d<0){ m--; d+=new Date(b.getFullYear(),b.getMonth(),0).getDate(); }
+  if(m<0){ y--; m+=12; }
+  return {y:y,m:m,d:d,sign:sign};
+}
+function vDatas(v){
+  var t=ymd(today());
+  var html='<div class="grid g2"><div class="card">'+
+    '<div class="tabs">'+[['entre','Entre datas'],['somar','Somar / subtrair'],['uteis','Dias úteis'],['idade','Idade']].map(function(x){ return '<button data-tab="'+x[0]+'" class="'+(calcTab===x[0]?'on':'')+'">'+x[1]+'</button>'; }).join('')+'</div><div id="calcBody"></div></div>'+
+    '<div><div class="sect" style="margin-top:0"><h2>Lembretes de datas</h2><button class="btn sm primary" id="addLb">+ Lembrete</button></div><div class="list" id="lbList"></div></div></div>';
+  v.innerHTML=html;
+  v.querySelectorAll('[data-tab]').forEach(function(b){ b.onclick=function(){ calcTab=b.dataset.tab; vDatas(v); }; });
+  var body=$('#calcBody');
+  if(calcTab==='entre'){
+    body.innerHTML='<div class="row">'+fld('Data inicial','a',t,'date')+fld('Data final','b',ymd(addDays(today(),30)),'date')+'</div>'+fld('Contar o dia final também','inc',false,'checkbox')+'<div class="result" id="res"></div>';
+  }else if(calcTab==='somar'){
+    body.innerHTML=fld('Data de partida','a',t,'date')+'<div class="row3">'+fld('Anos','yy','0','number')+fld('Meses','mm','0','number')+fld('Dias','dd','30','number')+'</div>'+sel('Operação','op','+',[['+','Somar'],['-','Subtrair']])+'<div class="result" id="res"></div>';
+  }else if(calcTab==='uteis'){
+    body.innerHTML=sel('O que calcular','modo','contar',[['contar','Dias úteis entre duas datas'],['somar','Data após N dias úteis']])+'<div class="row">'+fld('Data inicial','a',t,'date')+'<div id="secondF">'+fld('Data final','b',ymd(addDays(today(),30)),'date')+'</div></div>'+fld('Descontar feriados nacionais (Brasil)','hol',true,'checkbox')+'<div class="result" id="res"></div>';
+  }else{
+    body.innerHTML=fld('Data de nascimento (ou de início)','a','1980-01-01','date')+fld('Calcular na data','b',t,'date')+'<div class="result" id="res"></div>';
+  }
+  body.querySelectorAll('[name]').forEach(function(el){ el.addEventListener('input',calc); el.addEventListener('change',calc); });
+  var modo=body.querySelector('[name=modo]');
+  if(modo) modo.addEventListener('change',function(){ $('#secondF').innerHTML= modo.value==='contar'? fld('Data final','b',ymd(addDays(today(),30)),'date') : fld('Nº de dias úteis','n','10','number'); $('#secondF').querySelectorAll('[name]').forEach(function(el){ el.addEventListener('input',calc); }); calc(); });
+  calc();
+  renderLembretes();
+  $('#addLb').onclick=function(){ editLembrete(); };
+}
+function g(n){ var el=document.querySelector('#calcBody [name='+n+']'); if(!el) return null; return el.type==='checkbox'?el.checked:el.value; }
+function calc(){
+  var r=$('#res'); if(!r) return; var a=parse(g('a')), out='', save2=null;
+  if(!a){ r.innerHTML='<span class="muted">Escolha uma data.</span>'; return; }
+  if(calcTab==='entre'){
+    var b=parse(g('b')); if(!b){ r.innerHTML=''; return; }
+    var n=daysBetween(a,b); if(g('inc')) n+= n>=0?1:-1;
+    var x=ymdDiff(a,b), w=Math.floor(Math.abs(n)/7);
+    out='<div class="big num">'+plural(Math.abs(n),'dia','dias')+'</div><div class="muted small">'+
+      [x.y?plural(x.y,'ano','anos'):'', x.m?plural(x.m,'mês','meses'):'', x.d?plural(x.d,'dia','dias'):''].filter(Boolean).join(', ')+(x.y||x.m?'':'')+
+      ' · '+plural(w,'semana','semanas')+(Math.abs(n)%7?' e '+plural(Math.abs(n)%7,'dia','dias'):'')+' · '+plural(Math.abs(bizBetween(a,b,false)),'dia útil','dias úteis')+' (seg–sex)'+
+      (n<0?' · a data final é anterior à inicial':'')+'</div>';
+    save2=b;
+  }else if(calcTab==='somar'){
+    var s=g('op')==='-'?-1:1, d=addMonths(a,s*((Number(g('yy'))||0)*12+(Number(g('mm'))||0))); d=addDays(d,s*(Number(g('dd'))||0));
+    out='<div class="big">'+fmtDate(d)+'</div><div class="muted small">'+fmtLong(d)+' · '+relDays(daysBetween(today(),d))+'</div>'; save2=d;
+  }else if(calcTab==='uteis'){
+    var hol=g('hol');
+    if(g('modo')==='contar'){ var b2=parse(g('b')); if(!b2){ r.innerHTML=''; return; } var nb=bizBetween(a,b2,hol);
+      out='<div class="big num">'+plural(Math.abs(nb),'dia útil','dias úteis')+'</div><div class="muted small">Contados após a data inicial até a data final, inclusive'+(hol?', sem os feriados nacionais':'')+'. Total corrido: '+plural(Math.abs(daysBetween(a,b2)),'dia','dias')+'.</div>'; save2=b2; }
+    else { var d2=addBiz(a,Number(g('n'))||0,hol); out='<div class="big">'+fmtDate(d2)+'</div><div class="muted small">'+fmtLong(d2)+(hol?' · feriados nacionais descontados':'')+'</div>'; save2=d2; }
+  }else{
+    var b3=parse(g('b')); if(!b3){ r.innerHTML=''; return; } var z=ymdDiff(a,b3);
+    var nx=new Date(b3.getFullYear(),a.getMonth(),a.getDate()); if(nx<b3) nx.setFullYear(nx.getFullYear()+1);
+    out='<div class="big">'+plural(z.y,'ano','anos')+', '+plural(z.m,'mês','meses')+' e '+plural(z.d,'dia','dias')+'</div><div class="muted small">'+plural(Math.abs(daysBetween(a,b3)),'dia vivido','dias vividos')+' · próximo aniversário '+fmtDate(nx)+' ('+relDays(daysBetween(b3,nx))+', '+SEMANA[nx.getDay()]+')</div>'; save2=nx;
+  }
+  r.innerHTML=out+(save2?'<button class="btn sm" id="saveLb" style="margin-top:10px">Criar lembrete em '+fmtDate(save2)+'</button>':'');
+  if(save2){ var sd=ymd(save2); $('#saveLb').onclick=function(){ editLembrete(null, sd); }; }
+}
+function renderLembretes(){
+  var el=$('#lbList'); if(!el) return;
+  var l=D.lembretes.slice().sort(function(a,b){ return (a.feito-b.feito) || a.data.localeCompare(b.data); });
+  el.innerHTML=l.length? l.map(function(x){ var d=parse(x.data), n=daysBetween(today(),d);
+    return '<div class="item'+(x.feito?' done':'')+'"><div class="datebox"><b>'+d.getDate()+'</b><span>'+MES3[d.getMonth()]+'</span></div><div class="main"><div class="t">'+esc(x.titulo)+'</div><div class="m">'+fmtDate(x.data)+(x.hora?' às '+esc(x.hora):'')+' · '+relDays(n)+'</div>'+(x.nota?'<div class="m">'+esc(x.nota)+'</div>':'')+'</div>'+
+    '<div class="side-r"><div class="acts"><button class="btn sm" data-done-lb="'+x.id+'">'+(x.feito?'Reabrir':'Feito')+'</button><button class="btn sm ghost" data-edit-lb="'+x.id+'">Editar</button></div></div></div>'; }).join('')
+    : '<div class="empty">Prazos, renovações, retornos médicos... Use a calculadora e crie lembretes que entram no sistema de avisos.</div>';
+  bindItemActs(el);
+}
+function editLembrete(id, data){
+  var l=D.lembretes.find(function(x){return x.id===id;}) || {titulo:'', data:data||ymd(addDays(today(),1)), hora:D.cfg.horaAviso, nota:'', feito:false};
+  formDialog(id?'Editar lembrete':'Novo lembrete',
+    fld('Lembrar de','titulo',l.titulo,'text','required maxlength="120"')+'<div class="row">'+fld('Data','data',l.data,'date','required')+fld('Hora','hora',l.hora,'time')+'</div>'+fld('Nota','nota',l.nota,'text','maxlength="200"'),
+    function(d){ if(!d.titulo||!d.data) return false; Object.assign(l,d); if(!id){ l.id=uid(); D.lembretes.push(l); } toast('Lembrete salvo.'); },
+    id?function(){ D.lembretes=D.lembretes.filter(function(x){return x.id!==id;}); }:null);
+}
+
+/* =====================================================================
+   SALA: LITURGIA ROMANA DIÁRIA
+   - Calendário (tempo, cor, semana, ciclo) calculado aqui mesmo, offline.
+   - Leituras do dia: API pública liturgia.up.railway.app (textos da CNBB).
+   ===================================================================== */
+function easter(y){
+  var a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g2=Math.floor((b-f+1)/3),h=(19*a+b-d-g2+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;
+  return new Date(y,mo-1,da);
+}
+function advent1(y){ var x=new Date(y,11,25); return addDays(x, -(x.getDay()||7) - 21); }
+function epiphanyBR(y){ var d=new Date(y,0,2); while(d.getDay()!==0) d=addDays(d,1); return d; } // domingo entre 2 e 8 de janeiro
+function baptism(y){ var e=epiphanyBR(y); return e.getDate()>=7 ? addDays(e,1) : addDays(e,7); }
+var LIT_HEX={'Verde':'#4E8C5C','Vermelho':'#B4453E','Roxo':'#7B5EA7','Rosa':'#C98BA6','Branco':'#EDE9DD'};
+function ordinal(n){ return n+'ª'; }
+function ordM(n){ return n+'º'; }
+function litInfo(d){
+  d=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  var y=d.getFullYear(), E=easter(y), A=advent1(y), dow=d.getDay();
+  var litYear = d>=A ? y+1 : y;
+  var ciclo='Ano '+({1:'A',2:'B',0:'C'})[litYear%3]+(dow===0?'':' · ano '+(litYear%2?'I':'II')+' (dias de semana)');
+  var tempo, cor='Verde', titulo='', wk;
+  var ash=addDays(E,-46), palm=addDays(E,-7), pent=addDays(E,49), bap=baptism(y), xmasPrev=new Date(y-1,11,25);
+  var md=pad(d.getMonth()+1)+'-'+pad(d.getDate());
+  if(d>=A && d<new Date(y,11,25)){
+    tempo='Advento'; cor='Roxo'; wk=Math.floor(daysBetween(A,d)/7)+1;
+    titulo=(dow===0?ordM(wk)+' Domingo do Advento':SEMANA[dow]+' da '+ordinal(wk)+' semana do Advento');
+    if(dow===0&&wk===3) cor='Rosa';
+    if(md>='12-17') titulo=(dow===0?titulo:'Feria privilegiada do Advento ('+d.getDate()+' de dezembro)');
+  }else if(d>=new Date(y,11,25) || d<=bap){
+    tempo='Tempo do Natal'; cor='Branco';
+    if(md==='12-25') titulo='Natal do Senhor';
+    else if(md==='01-01') titulo='Santa Maria, Mãe de Deus';
+    else if(daysBetween(epiphanyBR(y),d)===0) titulo='Epifania do Senhor';
+    else if(daysBetween(bap,d)===0) titulo='Batismo do Senhor';
+    else if(d>=new Date(y,11,25)&&md<='12-31'){ titulo= dow===0?'Sagrada Família':'Oitava do Natal'; }
+    else titulo='Tempo do Natal';
+  }else if(d<ash){
+    tempo='Tempo Comum'; wk=Math.floor(daysBetween(bap,d)/7)+1;
+    titulo=dow===0?ordM(wk)+' Domingo do Tempo Comum':SEMANA[dow]+' da '+ordinal(wk)+' semana do Tempo Comum';
+  }else if(d<palm){
+    tempo='Quaresma'; cor='Roxo';
+    if(daysBetween(ash,d)<4) titulo= daysBetween(ash,d)===0 ? 'Quarta-feira de Cinzas' : SEMANA[dow]+' depois das Cinzas';
+    else { wk=Math.floor(daysBetween(addDays(ash,4),d)/7)+1; titulo=dow===0?ordM(wk)+' Domingo da Quaresma':SEMANA[dow]+' da '+ordinal(wk)+' semana da Quaresma'; if(dow===0&&wk===4) cor='Rosa'; }
+  }else if(d<addDays(E,-3)){
+    tempo='Semana Santa'; cor= dow===0?'Vermelho':'Roxo'; titulo= dow===0?'Domingo de Ramos e da Paixão do Senhor':SEMANA[dow]+' da Semana Santa';
+  }else if(d<E){
+    tempo='Tríduo Pascal'; var t=daysBetween(d,E);
+    titulo=t===3?'Quinta-feira Santa — Ceia do Senhor':t===2?'Sexta-feira da Paixão do Senhor':'Sábado Santo — Vigília Pascal';
+    cor=t===2?'Vermelho':'Branco';
+  }else if(d<=pent){
+    tempo='Tempo Pascal'; cor='Branco'; var dd=daysBetween(E,d); wk=Math.floor(dd/7)+1;
+    if(dd===0) titulo='Domingo da Páscoa da Ressurreição do Senhor';
+    else if(dd<7) titulo=SEMANA[dow]+' da Oitava da Páscoa';
+    else if(dd===49){ titulo='Domingo de Pentecostes'; cor='Vermelho'; }
+    else if(dd===42) titulo='Ascensão do Senhor';
+    else titulo=dow===0?ordM(wk)+' Domingo da Páscoa':SEMANA[dow]+' da '+ordinal(wk)+' semana da Páscoa';
+  }else{
+    tempo='Tempo Comum'; wk=34-Math.floor((daysBetween(d,A)-1)/7);
+    if(daysBetween(addDays(A,-7),d)===0) titulo='Nosso Senhor Jesus Cristo, Rei do Universo';
+    else if(daysBetween(addDays(pent,7),d)===0) titulo='Santíssima Trindade';
+    else if(daysBetween(addDays(E,60),d)===0) titulo='Santíssimo Corpo e Sangue de Cristo';
+    else titulo=dow===0?ordM(wk)+' Domingo do Tempo Comum':SEMANA[dow]+' da '+ordinal(wk)+' semana do Tempo Comum';
+    if(/Rei|Trindade|Corpo/.test(titulo)) cor='Branco';
+  }
+  var fixas={'02-02':'Apresentação do Senhor','03-19':'São José','03-25':'Anunciação do Senhor','06-29':'São Pedro e São Paulo','08-06':'Transfiguração do Senhor','08-15':'Assunção de Nossa Senhora','10-12':'Nossa Senhora Aparecida','11-01':'Todos os Santos','11-02':'Comemoração de todos os fiéis defuntos','12-08':'Imaculada Conceição de Nossa Senhora'};
+  if(fixas[md] && tempo!=='Tríduo Pascal' && tempo!=='Semana Santa'){ titulo=fixas[md]+' — '+titulo; cor= md==='06-29'?'Vermelho': md==='11-02'?'Roxo':'Branco'; }
+  return {titulo:titulo, tempo:tempo, cor:cor, hex:LIT_HEX[cor], ciclo:ciclo};
+}
+
+var litDay=today(), litCache=null;
+function litStore(){ if(!litCache){ try{ litCache=JSON.parse(lsGet(STORE_LIT))||{}; }catch(e){ litCache={}; } } return litCache; }
+function vLiturgia(v){
+  var info=litInfo(litDay), k=ymd(litDay), n=daysBetween(today(),litDay);
+  v.innerHTML='<div class="litbar"><button class="btn" id="litPrev" aria-label="Dia anterior">‹</button><div class="d"><b>'+fmtLong(litDay)+'</b><span class="muted small">'+(n===0?'hoje':relDays(n))+'</span></div><button class="btn" id="litNext" aria-label="Próximo dia">›</button></div>'+
+    (n!==0?'<div style="text-align:center;margin:-6px 0 10px"><button class="btn sm" id="litToday">Voltar para hoje</button></div>':'')+
+    '<div class="card" style="margin-bottom:14px"><div style="font:600 19px var(--serif)"><span class="color-dot" style="background:'+info.hex+'"></span>'+esc(info.titulo)+'</div><div class="muted small" style="margin-top:4px">'+esc(info.tempo)+' · cor litúrgica '+esc(info.cor.toLowerCase())+' · '+esc(info.ciclo)+'</div><div class="muted small" style="margin-top:4px">Calculado neste aparelho. Memórias e festas de santos aparecem com as leituras abaixo.</div></div>'+
+    '<div id="litTexts"><p class="muted">Carregando as leituras...</p></div>';
+  $('#litPrev').onclick=function(){ litDay=addDays(litDay,-1); vLiturgia(v); };
+  $('#litNext').onclick=function(){ litDay=addDays(litDay,1); vLiturgia(v); };
+  var lt=$('#litToday'); if(lt) lt.onclick=function(){ litDay=today(); vLiturgia(v); };
+  var cache=litStore();
+  if(cache[k]){ showLit(cache[k]); return; }
+  fetch('https://liturgia.up.railway.app/v2/?dia='+litDay.getDate()+'&mes='+(litDay.getMonth()+1)+'&ano='+litDay.getFullYear(), {referrerPolicy:'no-referrer', credentials:'omit'})
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      if(j.erro) throw new Error(j.erro);
+      cache[k]=j; var ks=Object.keys(cache).sort(); while(ks.length>21) delete cache[ks.shift()];
+      lsSet(STORE_LIT, JSON.stringify(cache));
+      if(room==='liturgia' && ymd(litDay)===k) showLit(j);
+    })
+    .catch(function(){
+      var el=$('#litTexts'); if(el && ymd(litDay)===k) el.innerHTML='<div class="empty">Não consegui baixar as leituras agora (é preciso internet). Os dias já abertos ficam guardados e funcionam sem conexão.</div>';
+    });
+}
+function paras(t){ return String(t||'').split('\n').filter(function(l){return l.trim();}).map(function(l){ return '<p>'+esc(l)+'</p>'; }).join(''); }
+function litBlock(rot, itens, open){
+  if(!itens||!itens.length) return '';
+  return itens.map(function(it,i){ return '<details class="leitura"'+(open?' open':'')+'><summary><span class="rot">'+esc(rot)+(itens.length>1?' ('+(i+1)+')':'')+'</span><span class="ref">'+esc(it.referencia||'')+'</span></summary><div class="texto">'+(it.titulo?'<p><em>'+esc(it.titulo)+'</em></p>':'')+(it.refrao?'<p class="refrao">'+esc(it.refrao)+'</p>':'')+paras(it.texto)+'</div></details>'; }).join('');
+}
+function showLit(j){
+  var el=$('#litTexts'); if(!el) return;
+  var L=j.leituras||{};
+  var h=(j.liturgia?'<h2 style="margin:0 0 10px"><span class="color-dot" style="background:'+(LIT_HEX[j.cor]||'transparent')+'"></span>'+esc(j.liturgia)+'</h2>':'')+
+    litBlock('Primeira leitura',L.primeiraLeitura)+litBlock('Salmo responsorial',L.salmo)+litBlock('Segunda leitura',L.segundaLeitura)+litBlock('Evangelho',L.evangelho,true);
+  (L.extras||[]).forEach(function(x){ h+=litBlock(x.tipo||x.titulo||'Outra leitura',[x]); });
+  var o=j.oracoes||{};
+  if(o.coleta) h+=litBlock('Oração do dia (coleta)',[{texto:o.coleta}]);
+  if(o.oferendas) h+=litBlock('Sobre as oferendas',[{texto:o.oferendas}]);
+  if(o.comunhao) h+=litBlock('Depois da comunhão',[{texto:o.comunhao}]);
+  var an=j.antifonas||{};
+  if(an.entrada) h+=litBlock('Antífona de entrada',[{texto:an.entrada}]);
+  if(an.comunhao) h+=litBlock('Antífona da comunhão',[{texto:an.comunhao}]);
+  h+='<p class="muted small" style="margin-top:12px">Textos litúrgicos da CNBB, via API pública liturgia.up.railway.app. Apenas a data é enviada; nada do seu cofre sai do aparelho.</p>';
+  el.innerHTML=h;
+}
+
+/* =====================================================================
+   SALA: AJUSTES
+   ===================================================================== */
+function vAjustes(v){
+  var c=D.cfg, perm=('Notification' in window)?Notification.permission:'indisponível';
+  v.innerHTML='<div class="grid g2">'+
+  '<div class="card"><h2>Segurança</h2>'+
+    sel('Trancar sozinho após inatividade','travarMin',c.travarMin,[[1,'1 minuto'],[2,'2 minutos'],[5,'5 minutos'],[10,'10 minutos'],[30,'30 minutos'],[0,'Nunca (não recomendado)']])+
+    fld('Trancar ao trocar de aba ou minimizar','travarAoSair',c.travarAoSair,'checkbox')+
+    fld('Esconder valores em dinheiro na tela','ocultarValores',c.ocultarValores,'checkbox')+
+    '<div class="btns"><button class="btn" id="chgPw">Trocar senha</button></div>'+
+  '</div>'+
+  '<div class="card"><h2>Avisos</h2>'+
+    '<div class="row">'+sel('Avisar contas com antecedência de','diasAviso',c.diasAviso,[[1,'1 dia'],[2,'2 dias'],[3,'3 dias'],[5,'5 dias'],[7,'7 dias'],[10,'10 dias']])+fld('Horário dos avisos','horaAviso',c.horaAviso,'time')+'</div>'+
+    fld('Notificações do sistema (PC e celular)','notifSistema',c.notifSistema,'checkbox')+
+    '<p class="muted small" style="margin:2px 0 0 26px">Permissão do navegador: <b>'+esc({granted:'concedida',denied:'bloqueada',default:'ainda não pedida'}[perm]||perm)+'</b></p>'+
+    fld('Notificação discreta (não mostra o conteúdo, só “você tem um aviso”)','notifDiscreta',c.notifDiscreta,'checkbox')+
+    fld('Avisar mesmo com o cofre trancado (guarda só os horários, sem texto)','dicasHorario',c.dicasHorario,'checkbox')+
+    '<div class="btns"><button class="btn" id="testN">Testar notificação</button><button class="btn" id="icsAll">Exportar tudo p/ calendário</button></div>'+
+    '<p class="muted small">Navegadores só mostram avisos enquanto o Cofre está aberto (ou instalado e em segundo plano). Para alarme garantido com o app fechado, exporte para o calendário do celular — o arquivo leva títulos discretos se a notificação discreta estiver ligada.</p>'+
+  '</div>'+
+  '<div class="card"><h2>Aparência</h2>'+sel('Tema','tema',c.tema,[['auto','Seguir o aparelho'],['light','Claro'],['dark','Escuro']])+
+    fld('Seu nome','nome',D.nome,'text','maxlength="40"')+'</div>'+
+  '<div class="card"><h2>Backup e dados</h2>'+
+    '<p class="muted small">O backup é um arquivo <b>cifrado</b> com a sua senha atual. Guarde-o em local seguro (pen drive, nuvem). Sem a senha ele não abre.</p>'+
+    '<div class="btns"><button class="btn" id="bkp">Baixar backup cifrado</button><button class="btn" id="rst">Restaurar backup</button></div>'+
+    '<div class="btns"><button class="btn danger" id="wipe">Apagar tudo deste aparelho</button></div>'+
+    '<p class="muted small">'+plural(D.eventos.length,'registro','registros')+' · '+plural(D.ordens.length,'ordem','ordens')+' · '+plural(D.contas.length,'conta','contas')+' · '+plural(D.lembretes.length,'lembrete','lembretes')+'</p>'+
+  '</div></div>'+
+  '<div class="card" style="margin-top:14px"><h2>Como sua privacidade é protegida</h2><ul class="small" style="margin:8px 0 0;padding-left:18px">'+
+    '<li>Tudo é cifrado com AES-256-GCM. A chave nasce da sua senha (PBKDF2-SHA256, 600 mil rodadas) e só existe na memória enquanto o cofre está aberto.</li>'+
+    '<li>Os dados ficam apenas neste aparelho/navegador. Não há servidor, conta, rastreador nem fonte externa.</li>'+
+    '<li>Após 3 senhas erradas, o cofre impõe espera crescente entre tentativas.</li>'+
+    '<li>A página pede para não ser indexada por buscadores e não envia referências a outros sites.</li>'+
+    '<li>Para usar em PC e celular, use o mesmo backup: baixe num aparelho e restaure no outro.</li></ul></div>';
+  v.querySelectorAll('[name]').forEach(function(el){
+    el.addEventListener('change', async function(){
+      var n=el.name, x= el.type==='checkbox'? el.checked : el.value;
+      if(n==='nome'){ D.nome=x.trim(); buildNav(); go('ajustes'); save(); return; }
+      if(['travarMin','diasAviso'].indexOf(n)>=0) x=Number(x);
+      if(n==='notifSistema' && x){
+        if(!('Notification' in window)){ toast('Este navegador não suporta notificações.'); el.checked=false; return; }
+        var p=await Notification.requestPermission();
+        if(p!=='granted'){ toast('Permissão negada pelo navegador.'); el.checked=false; x=false; }
+      }
+      D.cfg[n]=x; save(); if(n==='tema') applyTheme(); if(n==='notifSistema'||n==='ocultarValores') render();
+    });
+  });
+  $('#testN').onclick=function(){ if(!('Notification' in window)||Notification.permission!=='granted'){ toast('Ligue as notificações do sistema primeiro.'); return; } sysNotify('Cofre','Teste: as notificações estão funcionando.','teste'); };
+  $('#icsAll').onclick=function(){ exportICS('tudo'); };
+  $('#bkp').onclick=async function(){ await saveNow(); download('cofre-backup-'+ymd(today())+'.cofre', lsGet(STORE), 'application/json'); toast('Backup cifrado baixado.'); };
+  $('#rst').onclick=function(){ pickFile(function(box){
+    if(!box||box.app!=='cofre'||!box.ct){ toast('Arquivo de backup inválido.'); return; }
+    if(!confirm('Substituir TODOS os dados atuais pelos do backup? Depois será pedida a senha do backup.')) return;
+    lsSet(STORE, JSON.stringify(box)); key=null; D=null; showLock(); $('#lockSub').textContent='Backup restaurado. Digite a senha dele.';
+  }); };
+  $('#wipe').onclick=function(){
+    var t=prompt('Isto apaga o cofre deste aparelho de forma irreversível. Para confirmar, digite APAGAR');
+    if(t==='APAGAR'){ [STORE,STORE_HINT,STORE_TRY,STORE_LIT].forEach(lsDel); key=null; D=null; showLock(); toast('Tudo apagado.'); }
+  };
+  $('#chgPw').onclick=function(){
+    formDialog('Trocar senha', fld('Senha atual','old','','password','required autocomplete="current-password"')+fld('Nova senha (mín. 10 caracteres)','n1','','password','required minlength="10" autocomplete="new-password"')+fld('Repita a nova senha','n2','','password','required autocomplete="new-password"'),
+      function(d){
+        if(d.n1.length<10||d.n1!==d.n2){ toast('As novas senhas não conferem ou são curtas.'); return false; }
+        (async function(){
+          try{ var box=readBox(); var k=await deriveKey(d.old, unb64(box.salt), box.iter||ITER); await decryptBox(box,k); }
+          catch(e){ toast('Senha atual incorreta.'); return; }
+          salt=crypto.getRandomValues(new Uint8Array(16)); key=await deriveKey(d.n1,salt,ITER); await saveNow(); toast('Senha trocada. Faça um novo backup.');
+        })();
+      });
+  };
+}
+function download(name, text, type){
+  var a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([text],{type:type})); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+
+/* ---------------- exportar .ics (alarme confiável no calendário) ---------------- */
+function exportICS(what){
+  var disc=D.cfg.notifDiscreta, ev=[], H=D.cfg.horaAviso.replace(':','')+'00';
+  function stamp(dateStr, hhmm){ return dateStr.replace(/-/g,'')+'T'+(hhmm?hhmm.replace(':','')+'00':H); }
+  function icsEsc(s){ return String(s).replace(/\\/g,'\\\\').replace(/[,;]/g,function(c){return '\\'+c;}).replace(/\n/g,'\\n'); }
+  if(what!=='ordens') D.contas.filter(function(c){return !c.pago;}).forEach(function(c){ ev.push({uid:'c'+c.id, start:stamp(c.venc), title:disc?'Lembrete pessoal':'Pagar: '+c.desc+' ('+money(c.valor)+')', pre:D.cfg.diasAviso*1440}); });
+  if(what!=='contas') D.ordens.filter(function(o){return o.status==='pendente';}).forEach(function(o){ ev.push({uid:'o'+o.id, start:stamp(o.data,o.hora||'10:00'), title:disc?'Lembrete pessoal':o.tipo+': '+o.ativo+' ('+money(o.valor)+')', pre:1440}); });
+  if(what==='tudo') D.lembretes.filter(function(l){return !l.feito;}).forEach(function(l){ ev.push({uid:'l'+l.id, start:stamp(l.data,l.hora), title:disc?'Lembrete pessoal':l.titulo, pre:0}); });
+  if(!ev.length){ toast('Nada pendente para exportar.'); return; }
+  var now=new Date(), dt=now.getUTCFullYear()+pad(now.getUTCMonth()+1)+pad(now.getUTCDate())+'T'+pad(now.getUTCHours())+pad(now.getUTCMinutes())+'00Z';
+  var L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Cofre//PT-BR','CALSCALE:GREGORIAN'];
+  ev.forEach(function(e){
+    L.push('BEGIN:VEVENT','UID:'+e.uid+'@cofre.local','DTSTAMP:'+dt,'DTSTART:'+e.start,'DURATION:PT15M','SUMMARY:'+icsEsc(e.title),'CLASS:PRIVATE',
+      'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEsc(e.title),'TRIGGER:-PT0M','END:VALARM');
+    if(e.pre) L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+icsEsc(e.title),'TRIGGER:-PT'+e.pre+'M','END:VALARM');
+    L.push('END:VEVENT');
+  });
+  L.push('END:VCALENDAR');
+  download('cofre-'+what+'.ics', L.join('\r\n'), 'text/calendar');
+  toast(plural(ev.length,'item exportado','itens exportados')+'. Abra o arquivo no celular para importar.');
+}
+
+/* ---------------- início ---------------- */
+document.addEventListener('keydown', function(e){
+  if(!D) return;
+  if(e.key==='Escape' && !$('#drawer').classList.contains('hidden')) $('#drawer').classList.add('hidden');
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='l' && e.shiftKey){ e.preventDefault(); lockNow(); }
+});
+if('serviceWorker' in navigator && (location.protocol==='https:' || location.hostname==='localhost' || location.hostname==='127.0.0.1')){
+  navigator.serviceWorker.register('sw.js').catch(function(){});
+}
+if(!window.crypto || !crypto.subtle){
+  document.body.innerHTML='<div style="padding:24px;font-family:system-ui">O Cofre precisa ser aberto por <b>https://</b> (ou localhost) em um navegador atual, para que a criptografia funcione.</div>';
+}else{
+  showLock();
+  tick();
+}
+</script>
+</body>
+</html>
