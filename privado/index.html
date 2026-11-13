@@ -173,12 +173,6 @@ dialog form{padding:18px 18px 16px}
 dialog .dhead{display:flex;align-items:center;margin-bottom:6px}
 dialog .dhead h2{flex:1}
 
-.seg{display:flex;gap:3px;background:var(--sunk);border:1px solid var(--line);border-radius:10px;padding:3px;min-height:42px}
-.seg label{position:relative;flex:1;margin:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:6px 4px;border-radius:7px;cursor:pointer;color:var(--dim);font-size:13.5px;white-space:nowrap}
-.seg input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
-.seg label:has(input:checked){background:var(--raised);color:var(--text);font-weight:600;box-shadow:var(--shadow)}
-.seg label:has(input:focus-visible){outline:2px solid var(--accent)}
-dialog details summary{list-style:revert}
 @media (max-width:480px){ dialog .btns .btn{flex:1 1 auto} }
 
 /* ---------- calculadora ---------- */
@@ -343,7 +337,7 @@ function emptyData(name){
   return {
     nome: name || '',
     criado: new Date().toISOString(),
-    eventos: [], ordens: [], contas: [], lembretes: [],
+    eventos: [], contas: [], lembretes: [],
     avisosVistos: {}, avisosNotificados: {},
     cfg: { travarMin:5, travarAoSair:false, diasAviso:3, horaAviso:'09:00', notifSistema:false, notifDiscreta:true, dicasHorario:true, tema:'auto', ocultarValores:false }
   };
@@ -458,21 +452,20 @@ function pickFile(cb){
 var ICONS = {
   painel:'<path d="M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z"/>',
   registro:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5V21h16"/><path d="M9 7h7M9 11h5"/>',
-  investimentos:'<path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 6-6"/><path d="M15 8h5v5"/>',
   contas:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20M6 15h4"/>',
   datas:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"/>',
   liturgia:'<path d="M12 2v20M5 8h14"/>',
   ajustes:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'
 };
 var ROOMS = [
-  ['painel','Painel'],['registro','Registro'],['investimentos','Investimentos'],['contas','Contas'],
+  ['painel','Painel'],['registro','Registro'],['contas','Contas'],
   ['datas','Datas'],['liturgia','Liturgia'],['ajustes','Ajustes']
 ];
 function svg(name){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+ICONS[name]+'</svg>'; }
 
 function buildNav(){
   var brand = '<div class="brand"><svg viewBox="0 0 48 48"><rect x="6" y="20" width="36" height="24" rx="5" fill="none" stroke="currentColor" stroke-width="3"/><path d="M15 20v-6a9 9 0 0 1 18 0v6" fill="none" stroke="currentColor" stroke-width="3"/></svg>Cofre</div>';
-  var SHORT={investimentos:'Investir'};
+  var SHORT={};
   var mk = function(short){ return ROOMS.map(function(r){ return '<button class="navbtn" data-room="'+r[0]+'">'+svg(r[0])+'<span class="lbl">'+(short&&SHORT[r[0]]||r[1])+'</span><span class="count hidden" data-count="'+r[0]+'"></span></button>'; }).join(''); };
   var btns=mk(false);
   $('#sideNav').innerHTML = brand + btns + '<div class="spacer"></div><div class="muted small" style="padding:0 12px">'+(D.nome?'Olá, '+esc(D.nome)+'.':'')+'<br>Dados cifrados neste aparelho.</div>';
@@ -491,7 +484,7 @@ function go(r){
 function render(){
   if(!D) return;
   var v = $('#view');
-  ({painel:vPainel, registro:vRegistro, investimentos:vInvest, contas:vContas, datas:vDatas, liturgia:vLiturgia, ajustes:vAjustes})[room](v);
+  ({painel:vPainel, registro:vRegistro, contas:vContas, datas:vDatas, liturgia:vLiturgia, ajustes:vAjustes})[room](v);
   updateBadges();
 }
 function applyTheme(){
@@ -517,15 +510,6 @@ function allAlerts(){
       t:'Conta vence '+relDays(n)+': '+c.desc, m:val(c.valor)+' · vencimento '+fmtDate(c.venc), live:n>0}, base));
     out.push(Object.assign({key:'c:'+c.id+':'+c.venc+':hoje', when:atTime(c.venc,H), lvl:'bad',
       t:(n===0?'Conta vence hoje: ':'Conta em atraso: ')+c.desc, m:val(c.valor)+(n<0?' · venceu '+relDays(n):''), live:true}, base));
-  });
-  D.ordens.forEach(function(o){
-    if(o.status!=='pendente') return;
-    var w=atTime(o.data, o.hora||'10:00'), base={sala:'investimentos', ref:o.id};
-    var desc=o.tipo+' · '+o.ativo;
-    out.push(Object.assign({key:'o:'+o.id+':'+o.data+':vespera', when:w-86400000, lvl:'info',
-      t:'Ordem programada para amanhã: '+desc, m:val(o.valor,o.moeda)+' · '+fmtDate(o.data)+(o.hora?' às '+o.hora:''), live:w>now}, base));
-    out.push(Object.assign({key:'o:'+o.id+':'+o.data+':hora', when:w, lvl:'bad',
-      t:'Hora de executar a ordem: '+desc, m:val(o.valor,o.moeda)+' · '+fmtDate(o.data)+(o.hora?' às '+o.hora:'')+' · marque como executada', live:true}, base));
   });
   D.lembretes.forEach(function(l){
     if(l.feito) return;
@@ -574,7 +558,7 @@ function openDrawer(){
     (act.length? act.map(function(a){return alertHTML(a,true);}).join('') : '<div class="empty">Nada pendente agora.</div>')+
     (act.length>1?'<button class="btn sm" id="dismissAll">Dispensar todos</button>':'')+
     '<div class="sect"><h2>Próximos 14 dias</h2></div>'+
-    (prox.length? prox.map(function(a){ var d=new Date(a.when); return '<div class="alert"><span class="bar" style="background:var(--line)"></span><div class="main"><div class="t">'+esc(a.t.replace(/^(Conta vence|Ordem programada para) [^:]+:/,'$1:'))+'</div><div class="m">aparece em '+fmtDate(d)+' às '+pad(d.getHours())+':'+pad(d.getMinutes())+'</div></div></div>'; }).join('') : '<p class="muted small">Nenhum aviso agendado.</p>')+
+    (prox.length? prox.map(function(a){ var d=new Date(a.when); return '<div class="alert"><span class="bar" style="background:var(--line)"></span><div class="main"><div class="t">'+esc(a.t.replace(/^(Conta vence) [^:]+:/,'$1:'))+'</div><div class="m">aparece em '+fmtDate(d)+' às '+pad(d.getHours())+':'+pad(d.getMinutes())+'</div></div></div>'; }).join('') : '<p class="muted small">Nenhum aviso agendado.</p>')+
     (!D.cfg.notifSistema?'<p class="muted small">Para receber os avisos como notificação do sistema, ligue em <a href="#" id="toCfg">Ajustes</a>.</p>':'');
   $('#drawer').classList.remove('hidden');
   $('#closeDrawer').onclick=function(){ $('#drawer').classList.add('hidden'); };
@@ -679,7 +663,7 @@ function vPainel(v){
   var mesFim=new Date(t0.getFullYear(),t0.getMonth()+1,0);
   var noMes=abertas.filter(function(c){ return parse(c.venc)<=mesFim; });
   var atras=abertas.filter(function(c){ return parse(c.venc)<t0; });
-  var pend=D.ordens.filter(function(o){return o.status==='pendente';}).sort(function(a,b){return (a.data+(a.hora||'')).localeCompare(b.data+(b.hora||''));});
+  var lbs=D.lembretes.filter(function(l){return !l.feito;}).sort(function(a,b){return (a.data+(a.hora||'')).localeCompare(b.data+(b.hora||''));});
   var lit=litInfo(t0);
   var prox=abertas.slice().sort(function(a,b){return a.venc.localeCompare(b.venc);}).slice(0,5);
   var hoje=D.eventos.filter(function(e){ var d=parse(e.data); return d && d.getMonth()===t0.getMonth() && d.getDate()===t0.getDate() && d.getFullYear()<t0.getFullYear(); });
@@ -689,7 +673,7 @@ function vPainel(v){
     '<div class="grid g4">'+
       stat('A pagar este mês', val(sum(noMes)), plural(noMes.length,'conta','contas'))+
       stat('Em atraso', val(sum(atras)), plural(atras.length,'conta','contas'), atras.length?'var(--bad)':'')+
-      stat('Ordens pendentes', String(pend.length), pend[0]?'próxima '+fmtDate(pend[0].data):'nenhuma')+
+      stat('Lembretes', String(lbs.length), lbs[0]?'próximo '+fmtDate(lbs[0].data):'nenhum')+
       stat('Registros', String(D.eventos.length), D.eventos.length?'último '+fmtDate(latest(D.eventos)):'nenhum')+
     '</div>'+
     '<div class="card" style="margin-top:14px;cursor:pointer" id="litCard"><div class="small muted">Liturgia de hoje</div><div style="font:600 17px var(--serif);margin-top:2px"><span class="color-dot" style="background:'+lit.hex+'"></span>'+esc(lit.titulo)+'</div><div class="small muted">'+esc(lit.tempo)+' · cor '+esc(lit.cor.toLowerCase())+' · '+esc(lit.ciclo)+'</div></div>'+
@@ -698,7 +682,7 @@ function vPainel(v){
     (hoje.length?'<div class="sect"><h2>Neste dia, em outros anos</h2></div><div class="list">'+hoje.map(evItem).join('')+'</div>':'')+
     '<div class="grid g2" style="margin-top:8px">'+
       '<div><div class="sect"><h2>Próximas contas</h2><button class="btn sm" data-goto="contas">Abrir</button></div><div class="list">'+(prox.length?prox.map(contaItem).join(''):'<div class="empty">Nenhuma conta em aberto.</div>')+'</div></div>'+
-      '<div><div class="sect"><h2>Próximas ordens</h2><button class="btn sm" data-goto="investimentos">Abrir</button></div><div class="list">'+(pend.length?pend.slice(0,5).map(ordemItem).join(''):'<div class="empty">Nenhuma ordem programada.</div>')+'</div></div>'+
+      '<div><div class="sect"><h2>Próximos lembretes</h2><button class="btn sm" data-goto="datas">Abrir</button></div><div class="list">'+(lbs.length?lbs.slice(0,5).map(lbItem).join(''):'<div class="empty">Nenhum lembrete pendente.</div>')+'</div></div>'+
     '</div>';
   bindAlertActs(v);
   bindItemActs(v);
@@ -757,152 +741,9 @@ function editEvento(id){
     id?function(){ D.eventos=D.eventos.filter(function(x){return x.id!==id;}); }:null);
 }
 
-/* =====================================================================
-   SALA: PROGRAMAÇÃO DE ORDENS DE INVESTIMENTO
-   ===================================================================== */
-var invFilter='pendente', invCur='todas';
-var TIPOS=['Compra','Venda','Aporte','Resgate','Transferência'];
-var MOEDAS={BRL:{sym:'R$',nome:'Real'},USD:{sym:'US$',nome:'Dólar'}};
-function curOf(o){ return o.moeda==='USD'?'USD':'BRL'; }
-/* soma por moeda e formata "R$ x · US$ y" */
-function sumCur(list){ var r={BRL:0,USD:0}; list.forEach(function(o){ r[curOf(o)]+=Number(o.valor)||0; }); return r; }
-function fmtCur(s, both){ var p=[]; if(s.BRL||both||!s.USD) p.push(val(s.BRL,'BRL')); if(s.USD) p.push(val(s.USD,'USD')); return p.join('<br>'); }
-function approxBRL(s){ var c=numIn(D.cfg.cotacaoUSD); if(!s.USD||!c) return ''; return '≈ '+val(s.BRL+s.USD*c,'BRL')+' no total'; }
-function fmtNumIn(n, dec){ if(n===''||n==null||isNaN(n)) return ''; dec=dec==null?2:dec; return Number(n).toLocaleString('pt-BR',{minimumFractionDigits:dec===2?2:0,maximumFractionDigits:dec}); }
-
-function vInvest(v){
-  var t0=today();
-  var all=D.ordens.slice().sort(function(a,b){ return (a.data+(a.hora||'')).localeCompare(b.data+(b.hora||'')); });
-  var hasUSD=all.some(function(o){return curOf(o)==='USD';});
-  var base=all.filter(function(o){ return invCur==='todas' || curOf(o)===invCur; });
-  var list=base.filter(function(o){ return invFilter==='todas' || o.status===invFilter; });
-  if(invFilter!=='pendente') list.reverse();
-  var pend=base.filter(function(o){return o.status==='pendente';});
-  var exec=base.filter(function(o){return o.status==='executada';});
-  var entra=pend.filter(function(o){return o.tipo==='Compra'||o.tipo==='Aporte';});
-  var sai=pend.filter(function(o){return o.tipo==='Venda'||o.tipo==='Resgate';});
-  var atras=pend.filter(function(o){return parse(o.data)<t0;});
-  var se=sumCur(entra), ss=sumCur(sai);
-  v.innerHTML='<div class="grid g4">'+
-      stat('Pendentes', String(pend.length), atras.length?plural(atras.length,'atrasada','atrasadas'):'em dia', atras.length?'var(--bad)':'')+
-      stat('Compras/aportes', fmtCur(se), plural(entra.length,'ordem','ordens')+(approxBRL(se)?' · '+approxBRL(se):''))+
-      stat('Vendas/resgates', fmtCur(ss), plural(sai.length,'ordem','ordens')+(approxBRL(ss)?' · '+approxBRL(ss):''))+
-      stat('Executadas', String(exec.length), exec.length?'total '+fmtCur(sumCur(exec)).replace('<br>',' · '):'—')+
-    '</div>'+
-    '<div class="toolbar" style="margin-top:16px"><div class="chips">'+[['pendente','Pendentes'],['executada','Executadas'],['cancelada','Canceladas'],['todas','Todas']].map(function(c){ return '<button class="chip'+(invFilter===c[0]?' on':'')+'" data-f="'+c[0]+'">'+c[1]+'</button>'; }).join('')+
-      (hasUSD?'<span style="width:10px"></span>'+[['todas','R$ + US$'],['BRL','Só R$'],['USD','Só US$']].map(function(c){ return '<button class="chip'+(invCur===c[0]?' on':'')+'" data-c="'+c[0]+'">'+c[1]+'</button>'; }).join(''):'')+'</div>'+
-    '<span style="flex:1"></span><button class="btn" id="icsInv">Exportar p/ calendário</button><button class="btn primary" id="addOr">+ Programar ordem</button></div>'+
-    '<div class="list">'+(list.length?list.map(ordemItem).join(''):'<div class="empty">'+(invFilter==='pendente'?'Nenhuma ordem programada. Programe compras, vendas, aportes ou resgates, em reais ou dólares, com data e hora para receber o aviso na hora certa.':'Nada aqui.')+'</div>')+'</div>'+
-    (hasUSD?'<div class="card" style="margin-top:14px;display:flex;gap:12px;align-items:end;flex-wrap:wrap"><div style="flex:1 1 220px"><label for="cotUSD" style="margin-top:0">Cotação do dólar para o total aproximado (opcional)</label><input id="cotUSD" inputmode="decimal" placeholder="ex.: 5,40" value="'+esc(D.cfg.cotacaoUSD||'')+'"></div><p class="muted small" style="flex:1 1 220px;margin:0">O Cofre não consulta cotações na internet (para não expor nada). Digite a cotação que quiser usar como referência.</p></div>':'')+
-    '<p class="muted small" style="margin-top:14px">O Cofre não se conecta a corretoras: ele organiza e avisa. A execução é feita por você, na sua plataforma.</p>';
-  v.querySelectorAll('[data-f]').forEach(function(b){ b.onclick=function(){ invFilter=b.dataset.f; vInvest(v); }; });
-  v.querySelectorAll('[data-c]').forEach(function(b){ b.onclick=function(){ invCur=b.dataset.c; vInvest(v); }; });
-  var cu=$('#cotUSD'); if(cu) cu.onchange=function(){ D.cfg.cotacaoUSD=cu.value.trim(); save(); vInvest(v); };
-  $('#addOr').onclick=function(){ editOrdem(); };
-  $('#icsInv').onclick=function(){ exportICS('ordens'); };
-  bindItemActs(v);
-}
-function ordemItem(o){
-  var d=parse(o.data), n=daysBetween(today(),d), cur=curOf(o);
-  var st=o.status==='executada'?'<span class="tag ok">executada</span>':o.status==='cancelada'?'<span class="tag">cancelada</span>':(n<0?'<span class="tag bad">atrasada</span>':n<=1?'<span class="tag warn">'+relDays(n)+'</span>':'<span class="tag info">'+relDays(n)+'</span>');
-  var q=o.qtd?' · '+fmtNumIn(numIn(o.qtd),8)+(o.preco?' × '+money(o.preco,cur):''):'';
-  return '<div class="item'+(o.status!=='pendente'?' done':'')+'"><div class="datebox"><b>'+d.getDate()+'</b><span>'+MES3[d.getMonth()]+'</span></div><div class="main">'+
-    '<div class="t">'+esc(o.tipo)+' · '+esc(o.ativo)+'</div><div class="m">'+fmtDate(o.data)+(o.hora?' às '+esc(o.hora):'')+(o.corretora?' · '+esc(o.corretora):'')+q+(o.recorr&&o.recorr!=='nao'?' · repete '+recLabel(o.recorr):'')+'</div>'+
-    '<div style="margin-top:4px">'+(cur==='USD'?'<span class="tag info">USD</span>':'')+st+'</div>'+(o.nota?'<div class="m" style="margin-top:6px;white-space:pre-wrap">'+esc(o.nota)+'</div>':'')+'</div>'+
-    '<div class="side-r"><div class="num" style="font-weight:650">'+val(o.valor,cur)+'</div><div class="acts">'+
-      (o.status==='pendente'?'<button class="btn sm" data-exec="'+o.id+'">Executada</button>':'')+
-      '<button class="btn sm ghost" data-dup-or="'+o.id+'" title="Criar outra igual">Repetir</button>'+
-      '<button class="btn sm ghost" data-edit-or="'+o.id+'">Editar</button></div></div></div>';
-}
+/* repetição (usada pelas contas) */
 function recLabel(r){ return {semanal:'toda semana',mensal:'todo mês',trimestral:'a cada 3 meses',anual:'todo ano'}[r]||''; }
 function nextDate(dateStr, r){ var d=parse(dateStr); if(r==='semanal') d=addDays(d,7); else if(r==='mensal') d=addMonths(d,1); else if(r==='trimestral') d=addMonths(d,3); else if(r==='anual') d=addMonths(d,12); else return null; return ymd(d); }
-
-/* memória de ativos já usados: ao digitar um ativo conhecido, preenche moeda, corretora e preço */
-function assetMemory(){
-  var m={};
-  D.ordens.slice().sort(function(a,b){ return a.data.localeCompare(b.data); }).forEach(function(o){ m[String(o.ativo).toUpperCase()]={ativo:o.ativo, moeda:curOf(o), corretora:o.corretora, preco:o.preco}; });
-  return m;
-}
-/* palpite de moeda pelo código: PETR4/BOVA11 = B3 (R$); AAPL/VOO = EUA (US$) */
-function guessCur(t){ t=String(t).trim().toUpperCase(); if(/^[A-Z]{4}\d{1,2}F?$/.test(t)) return 'BRL'; if(/^[A-Z]{1,5}(\.[A-Z])?$/.test(t) && !/^(CDB|LCI|LCA|CRI|CRA|LC|IPCA|SELIC|CDI|POUP)/.test(t)) return 'USD'; if(/TESOURO|CDB|LCI|LCA|POUPAN|FUNDO|PREVID|DEB[EÊ]NTURE/i.test(t)) return 'BRL'; return null; }
-
-function seg(name, value, opts){
-  return '<div class="seg" role="radiogroup">'+opts.map(function(o){ var v=Array.isArray(o)?o[0]:o, t=Array.isArray(o)?o[1]:o;
-    return '<label><input type="radio" name="'+name+'" value="'+esc(v)+'"'+(String(v)===String(value)?' checked':'')+'>'+esc(t)+'</label>'; }).join('')+'</div>';
-}
-function editOrdem(id, from){
-  var last=D.cfg.ultOrdem||{};
-  var o=D.ordens.find(function(x){return x.id===id;}) ||
-    Object.assign({tipo:'Compra', ativo:'', data:ymd(addDays(today(),1)), hora:'10:00', valor:'', qtd:'', preco:'', corretora:last.corretora||'', moeda:last.moeda||'BRL', status:'pendente', recorr:'nao', nota:''},
-      from?{tipo:from.tipo, ativo:from.ativo, valor:from.valor, qtd:from.qtd, preco:from.preco, corretora:from.corretora, moeda:curOf(from), hora:from.hora, recorr:from.recorr, nota:from.nota, data:from.keepDate?from.data:(ymd(today())<=from.data?(nextDate(from.data,from.recorr&&from.recorr!=='nao'?from.recorr:'mensal')):ymd(addDays(today(),1)))}:{});
-  var cur=curOf(o), mem=assetMemory(), S=MOEDAS[cur].sym;
-  var mais = !!(o.corretora||o.nota||(o.recorr&&o.recorr!=='nao')||id);
-  formDialog(id?'Editar ordem':'Programar ordem',
-    '<label>Tipo</label>'+seg('tipo',o.tipo,[['Compra','Compra'],['Venda','Venda'],['Aporte','Aporte'],['Resgate','Resgate'],['Transferência','Transf.']])+
-    '<div class="row" style="align-items:end"><div><label>Ativo / produto</label><input name="ativo" required maxlength="80" list="ativosList" autocomplete="off" placeholder="PETR4, AAPL, Tesouro IPCA 2035..." value="'+esc(o.ativo)+'"></div>'+
-      '<div><label>Moeda</label>'+seg('moeda',cur,[['BRL','R$ Real'],['USD','US$ Dólar']])+'</div></div>'+
-    '<datalist id="ativosList">'+Object.keys(mem).map(function(k){ return '<option value="'+esc(mem[k].ativo)+'">'; }).join('')+'</datalist>'+
-    '<p class="muted small hidden" id="assetHint" style="margin:6px 0 0"></p>'+
-    '<div class="row3">'+
-      '<div><label>Quantidade</label><input name="qtd" inputmode="decimal" autocomplete="off" placeholder="opcional" value="'+esc(o.qtd===''?'':fmtNumIn(numIn(o.qtd),8))+'"></div>'+
-      '<div><label>Preço <span class="cs">('+S+')</span></label><input name="preco" inputmode="decimal" autocomplete="off" placeholder="opcional" value="'+esc(o.preco===''?'':fmtNumIn(o.preco,4))+'"></div>'+
-      '<div><label>Valor total <span class="cs">('+S+')</span></label><input name="valor" inputmode="decimal" autocomplete="off" placeholder="0,00" value="'+esc(o.valor===''?'':fmtNumIn(o.valor,2))+'"></div>'+
-    '</div>'+
-    '<p class="muted small" style="margin:6px 0 0">Preencha quantidade e preço e o total sai sozinho — ou digite só o total.</p>'+
-    '<div class="row">'+fld('Data','data',o.data,'date','required')+fld('Hora do aviso','hora',o.hora,'time')+'</div>'+
-    '<div class="chips" style="margin-top:8px">'+[['0','Hoje'],['1','Amanhã'],['7','+7 dias'],['m','+1 mês'],['u','Último dia útil do mês']].map(function(x){ return '<button type="button" class="chip" data-qd="'+x[0]+'">'+x[1]+'</button>'; }).join('')+'</div>'+
-    '<details id="maisOr"'+(mais?' open':'')+' style="margin-top:12px"><summary class="muted small" style="cursor:pointer">Mais detalhes (corretora, repetição, situação, observações)</summary>'+
-      '<div class="row">'+fld('Corretora / banco','corretora',o.corretora,'text','maxlength="60" list="corrList"')+sel('Repetir','recorr',o.recorr||'nao',[['nao','Não repete'],['semanal','Toda semana'],['mensal','Todo mês'],['trimestral','A cada 3 meses'],['anual','Todo ano']])+'</div>'+
-      '<datalist id="corrList">'+Array.from(new Set(D.ordens.map(function(x){return x.corretora;}).filter(Boolean))).map(function(c){ return '<option value="'+esc(c)+'">'; }).join('')+'</datalist>'+
-      sel('Situação','status',o.status,[['pendente','Pendente'],['executada','Executada'],['cancelada','Cancelada']])+
-      fld('Observações','nota',o.nota,'textarea')+
-    '</details>',
-    function(d){
-      if(!d.ativo||!d.data) return false;
-      d.moeda=d.moeda==='USD'?'USD':'BRL';
-      d.valor=numIn(d.valor); d.preco=d.preco?numIn(d.preco):''; d.qtd=d.qtd?numIn(d.qtd):'';
-      if(!d.valor && d.qtd && d.preco) d.valor=Math.round(d.qtd*d.preco*100)/100;
-      Object.assign(o,d); if(!id){ o.id=uid(); D.ordens.push(o); }
-      D.cfg.ultOrdem={moeda:d.moeda, corretora:d.corretora};
-      toast('Ordem salva: '+o.tipo+' '+o.ativo+' · '+money(o.valor,o.moeda)+'.');
-    },
-    id?function(){ D.ordens=D.ordens.filter(function(x){return x.id!==id;}); }:null,
-    { saveNew: !id, onNew: function(){ var l=D.ordens[D.ordens.length-1]; editOrdem(null, l?{tipo:l.tipo, ativo:'', valor:'', qtd:'', preco:'', corretora:l.corretora, moeda:l.moeda, hora:l.hora, recorr:'nao', nota:'', data:l.data, keepDate:true}:null); },
-      after: function(f){
-        var q=f.querySelector('[name=qtd]'), p=f.querySelector('[name=preco]'), t=f.querySelector('[name=valor]'), a=f.querySelector('[name=ativo]'), hint=$('#assetHint');
-        var valorManual = !!(o.valor && !(o.qtd && o.preco));
-        function curNow(){ var r=f.querySelector('[name=moeda]:checked'); return r?r.value:'BRL'; }
-        function setCur(c){ var r=f.querySelector('[name=moeda][value='+c+']'); if(r){ r.checked=true; syncSym(); } }
-        function syncSym(){ f.querySelectorAll('.cs').forEach(function(s){ s.textContent='('+MOEDAS[curNow()].sym+')'; }); }
-        f.querySelectorAll('[name=moeda]').forEach(function(r){ r.addEventListener('change', syncSym); });
-        function recalc(){ var qq=numIn(q.value), pp=numIn(p.value); if(qq && pp && !valorManual) t.value=fmtNumIn(Math.round(qq*pp*100)/100,2); }
-        q.addEventListener('input', recalc); p.addEventListener('input', recalc);
-        t.addEventListener('input', function(){ valorManual = t.value.trim()!==''; var pp=numIn(p.value), tt=numIn(t.value); if(valorManual && pp && !q.value.trim()) q.placeholder='≈ '+fmtNumIn(tt/pp,4); });
-        [q,p,t].forEach(function(el){ el.addEventListener('blur', function(){ if(el.value.trim()) el.value=fmtNumIn(numIn(el.value), el===t?2:(el===q?8:4)); }); });
-        a.addEventListener('change', function(){
-          var k=a.value.trim().toUpperCase(), m=mem[k];
-          if(m){ setCur(m.moeda); var c=f.querySelector('[name=corretora]'); if(c && !c.value) c.value=m.corretora||''; if(!p.value && m.preco) { p.value=fmtNumIn(m.preco,4); recalc(); }
-            hint.textContent='Ativo já usado antes: moeda e corretora preenchidas.'; hint.classList.remove('hidden'); }
-          else { var g=guessCur(k); if(g){ setCur(g); hint.textContent= g==='USD'?'Parece um ativo dos EUA: moeda ajustada para US$ (você pode trocar).':'Parece um ativo brasileiro: moeda em R$.'; hint.classList.remove('hidden'); } else hint.classList.add('hidden'); }
-        });
-        f.querySelectorAll('[data-qd]').forEach(function(b){ b.onclick=function(){
-          var k=b.dataset.qd, d=today();
-          if(k==='m') d=addMonths(d,1); else if(k==='u'){ d=new Date(d.getFullYear(),d.getMonth()+1,0); var hol={}; while(!isBiz(d,hol)) d=addDays(d,-1); if(d<today()){ d=new Date(today().getFullYear(),today().getMonth()+2,0); while(!isBiz(d,hol)) d=addDays(d,-1); } }
-          else d=addDays(d,+k);
-          f.querySelector('[name=data]').value=ymd(d);
-        }; });
-        if(!id && !from) a.focus();
-      } });
-}
-function dupOrdem(id){ var o=D.ordens.find(function(x){return x.id===id;}); if(o) editOrdem(null, o); }
-function execOrdem(id){
-  var o=D.ordens.find(function(x){return x.id===id;}); if(!o) return;
-  o.status='executada'; o.executadaEm=new Date().toISOString();
-  var nd=nextDate(o.data,o.recorr);
-  if(nd){ var n=Object.assign({},o,{id:uid(),data:nd,status:'pendente'}); delete n.executadaEm; D.ordens.push(n); toast('Executada. Próxima: '+fmtDate(nd)+'.'); }
-  else toast('Ordem marcada como executada.');
-  save(); render();
-}
 
 /* =====================================================================
    SALA: CONTAS A PAGAR
@@ -975,9 +816,6 @@ function payConta(id){
 /* ---------------- ações das listas ---------------- */
 function bindItemActs(root){
   root.querySelectorAll('[data-edit-ev]').forEach(function(b){ b.onclick=function(){ editEvento(b.dataset.editEv); }; });
-  root.querySelectorAll('[data-edit-or]').forEach(function(b){ b.onclick=function(){ editOrdem(b.dataset.editOr); }; });
-  root.querySelectorAll('[data-dup-or]').forEach(function(b){ b.onclick=function(){ dupOrdem(b.dataset.dupOr); }; });
-  root.querySelectorAll('[data-exec]').forEach(function(b){ b.onclick=function(){ execOrdem(b.dataset.exec); }; });
   root.querySelectorAll('[data-edit-ct]').forEach(function(b){ b.onclick=function(){ editConta(b.dataset.editCt); }; });
   root.querySelectorAll('[data-pay]').forEach(function(b){ b.onclick=function(){ payConta(b.dataset.pay); }; });
   root.querySelectorAll('[data-unpay]').forEach(function(b){ b.onclick=function(){ var c=D.contas.find(function(x){return x.id===b.dataset.unpay;}); if(c){ c.pago=false; delete c.pagoEm; save(); render(); } }; });
@@ -1063,12 +901,13 @@ function calc(){
 function renderLembretes(){
   var el=$('#lbList'); if(!el) return;
   var l=D.lembretes.slice().sort(function(a,b){ return (a.feito-b.feito) || a.data.localeCompare(b.data); });
-  el.innerHTML=l.length? l.map(function(x){ var d=parse(x.data), n=daysBetween(today(),d);
-    return '<div class="item'+(x.feito?' done':'')+'"><div class="datebox"><b>'+d.getDate()+'</b><span>'+MES3[d.getMonth()]+'</span></div><div class="main"><div class="t">'+esc(x.titulo)+'</div><div class="m">'+fmtDate(x.data)+(x.hora?' às '+esc(x.hora):'')+' · '+relDays(n)+'</div>'+(x.nota?'<div class="m">'+esc(x.nota)+'</div>':'')+'</div>'+
-    '<div class="side-r"><div class="acts"><button class="btn sm" data-done-lb="'+x.id+'">'+(x.feito?'Reabrir':'Feito')+'</button><button class="btn sm ghost" data-edit-lb="'+x.id+'">Editar</button></div></div></div>'; }).join('')
+  el.innerHTML=l.length? l.map(lbItem).join('')
     : '<div class="empty">Prazos, renovações, retornos médicos... Use a calculadora e crie lembretes que entram no sistema de avisos.</div>';
   bindItemActs(el);
 }
+function lbItem(x){ var d=parse(x.data), n=daysBetween(today(),d);
+    return '<div class="item'+(x.feito?' done':'')+'"><div class="datebox"><b>'+d.getDate()+'</b><span>'+MES3[d.getMonth()]+'</span></div><div class="main"><div class="t">'+esc(x.titulo)+'</div><div class="m">'+fmtDate(x.data)+(x.hora?' às '+esc(x.hora):'')+' · '+relDays(n)+'</div>'+(x.nota?'<div class="m">'+esc(x.nota)+'</div>':'')+'</div>'+
+    '<div class="side-r"><div class="acts"><button class="btn sm" data-done-lb="'+x.id+'">'+(x.feito?'Reabrir':'Feito')+'</button><button class="btn sm ghost" data-edit-lb="'+x.id+'">Editar</button></div></div></div>'; }
 function editLembrete(id, data){
   var l=D.lembretes.find(function(x){return x.id===id;}) || {titulo:'', data:data||ymd(addDays(today(),1)), hora:D.cfg.horaAviso, nota:'', feito:false};
   formDialog(id?'Editar lembrete':'Novo lembrete',
@@ -1220,7 +1059,7 @@ function vAjustes(v){
     '<p class="muted small">O backup é um arquivo <b>cifrado</b> com a sua senha atual. Guarde-o em local seguro (pen drive, nuvem). Sem a senha ele não abre.</p>'+
     '<div class="btns"><button class="btn" id="bkp">Baixar backup cifrado</button><button class="btn" id="rst">Restaurar backup</button></div>'+
     '<div class="btns"><button class="btn danger" id="wipe">Apagar tudo deste aparelho</button></div>'+
-    '<p class="muted small">'+plural(D.eventos.length,'registro','registros')+' · '+plural(D.ordens.length,'ordem','ordens')+' · '+plural(D.contas.length,'conta','contas')+' · '+plural(D.lembretes.length,'lembrete','lembretes')+'</p>'+
+    '<p class="muted small">'+plural(D.eventos.length,'registro','registros')+' · '+plural(D.contas.length,'conta','contas')+' · '+plural(D.lembretes.length,'lembrete','lembretes')+'</p>'+
   '</div></div>'+
   '<div class="card" style="margin-top:14px"><h2>Como sua privacidade é protegida</h2><ul class="small" style="margin:8px 0 0;padding-left:18px">'+
     '<li>Tudo é cifrado com AES-256-GCM. A chave nasce da sua senha (PBKDF2-SHA256, 600 mil rodadas) e só existe na memória enquanto o cofre está aberto.</li>'+
@@ -1286,8 +1125,7 @@ function exportICS(what){
   var disc=D.cfg.notifDiscreta, ev=[], H=D.cfg.horaAviso.replace(':','')+'00';
   function stamp(dateStr, hhmm){ return dateStr.replace(/-/g,'')+'T'+(hhmm?hhmm.replace(':','')+'00':H); }
   function icsEsc(s){ return String(s).replace(/\\/g,'\\\\').replace(/[,;]/g,function(c){return '\\'+c;}).replace(/\n/g,'\\n'); }
-  if(what!=='ordens') D.contas.filter(function(c){return !c.pago;}).forEach(function(c){ ev.push({uid:'c'+c.id, start:stamp(c.venc), title:disc?'Lembrete pessoal':'Pagar: '+c.desc+' ('+money(c.valor)+')', pre:D.cfg.diasAviso*1440}); });
-  if(what!=='contas') D.ordens.filter(function(o){return o.status==='pendente';}).forEach(function(o){ ev.push({uid:'o'+o.id, start:stamp(o.data,o.hora||'10:00'), title:disc?'Lembrete pessoal':o.tipo+': '+o.ativo+' ('+money(o.valor,o.moeda)+')', pre:1440}); });
+  D.contas.filter(function(c){return !c.pago;}).forEach(function(c){ ev.push({uid:'c'+c.id, start:stamp(c.venc), title:disc?'Lembrete pessoal':'Pagar: '+c.desc+' ('+money(c.valor)+')', pre:D.cfg.diasAviso*1440}); });
   if(what==='tudo') D.lembretes.filter(function(l){return !l.feito;}).forEach(function(l){ ev.push({uid:'l'+l.id, start:stamp(l.data,l.hora), title:disc?'Lembrete pessoal':l.titulo, pre:0}); });
   if(!ev.length){ toast('Nada pendente para exportar.'); return; }
   var now=new Date(), dt=now.getUTCFullYear()+pad(now.getUTCMonth()+1)+pad(now.getUTCDate())+'T'+pad(now.getUTCHours())+pad(now.getUTCMinutes())+'00Z';
